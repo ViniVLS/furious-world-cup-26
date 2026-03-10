@@ -1,4 +1,4 @@
-import { OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ProgressBarComponent } from '../../../shared/components/progress-bar/progress-bar.component';
 import { NotificationService } from '../../../core/services/notification.service';
