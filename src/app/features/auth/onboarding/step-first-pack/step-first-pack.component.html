@@ -1,0 +1,16 @@
+<div class="pack-step text-center">
+  <h2 class="text-3xl font-bold mb-6">Seu Primeiro Pacote!</h2>
+  
+  <div class="pack-container" (click)="openPack()" (keydown.enter)="openPack()" tabindex="0" [class.opening]="opened">
+    <div class="pack-visual">
+      <span class="font-display text-2xl">BÁSICO</span>
+    </div>
+  </div>
+
+  @if (!opened) {
+    <p class="text-muted mt-6">Toque para abrir</p>
+  }
+  @if (opened) {
+    <p class="text-fury mt-6 font-bold">Abrindo...</p>
+  }
+</div>

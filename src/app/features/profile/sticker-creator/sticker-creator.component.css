@@ -1,0 +1,162 @@
+.creator-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.custom-sticker-wrapper {
+  width: 280px;
+  height: 392px;
+  border-radius: 12px;
+  position: relative;
+  padding: 8px;
+  background: #2a2a3a;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
+.custom-sticker-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  background: #1a1a2a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.custom-sticker-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+  z-index: 1;
+}
+
+.custom-sticker-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  transition: all 0.5s ease;
+}
+
+.custom-sticker-photo.bg-removed {
+  object-fit: contain;
+  transform: scale(1.1) translateY(10%);
+}
+
+.custom-sticker-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #2a2a3a;
+  z-index: 2;
+}
+
+.custom-sticker-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px;
+  pointer-events: none;
+}
+
+.custom-sticker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.custom-sticker-country {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 900;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+}
+
+.custom-sticker-number {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 900;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+}
+
+.custom-sticker-footer {
+  width: 100%;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.custom-sticker-name {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 900;
+  color: white;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+}
+
+.custom-sticker-position {
+  font-size: 12px;
+  color: #aaa;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.watermark {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  font-size: 8px;
+  color: rgba(255, 255, 255, 0.5);
+  z-index: 10;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Rarities */
+.custom-sticker-wrapper.common {
+  background: #e2e8f0;
+}
+
+.custom-sticker-wrapper.special {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+}
+
+.custom-sticker-wrapper.epic {
+  background: linear-gradient(135deg, #8b5cf6, #d946ef);
+}
+
+.custom-sticker-wrapper.legendary {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+}
+
+.custom-sticker-wrapper.furious {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  box-shadow: 0 0 30px rgba(239, 68, 68, 0.6);
+  animation: pulse-furious 2s infinite;
+}
+
+@keyframes pulse-furious {
+  0% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+  50% { box-shadow: 0 0 40px rgba(239, 68, 68, 0.8); }
+  100% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+}

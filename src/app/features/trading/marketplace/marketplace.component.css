@@ -1,0 +1,110 @@
+.marketplace-page {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.offers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.offer-card {
+  background-color: var(--color-graphite);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  border: 1px solid transparent;
+  transition: transform var(--transition-fast);
+}
+
+.offer-card:hover {
+  transform: translateY(-2px);
+}
+
+.offer-card.match {
+  border-color: var(--color-fury);
+  background: linear-gradient(to right, rgba(255, 45, 32, 0.05), var(--color-graphite));
+}
+
+.offer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.badge {
+  background: var(--color-fury);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.offer-body {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.offer-side {
+  flex: 1;
+}
+
+.offer-divider {
+  color: var(--color-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stickers-mini {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mini-sticker {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+}
+
+.btn-primary {
+  background: var(--grad-hero);
+  color: white;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+}
+
+.btn-action {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.btn-action:hover {
+  background: rgba(255, 255, 255, 0.1);
+}

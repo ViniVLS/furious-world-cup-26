@@ -1,0 +1,247 @@
+.sticker-card {
+  width: 120px;
+  height: 168px;
+  perspective: 1000px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+  position: relative;
+}
+
+.sticker-card:hover {
+  transform: scale(1.05) translateY(-5px);
+  z-index: 10;
+}
+
+.sticker-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #1e1e2e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sticker-front {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.sticker-header {
+  height: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8px;
+  background: rgba(0, 0, 0, 0.3);
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+}
+
+/* Photo Area */
+.sticker-photo-container {
+  flex: 1;
+  position: relative;
+  background: #0a0a1a;
+  overflow: hidden;
+}
+
+.sticker-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sticker-silhouette {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Footer */
+.sticker-footer {
+  padding: 6px 8px;
+  background: #1e1e2e;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sticker-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  text-align: center;
+}
+
+.sticker-subtitle {
+  font-size: 9px;
+  color: #aaa;
+  text-transform: uppercase;
+  margin-top: -2px;
+}
+
+.sticker-rarity-stars {
+  display: flex;
+  gap: 1px;
+  margin-top: 2px;
+}
+
+.star-icon {
+  font-size: 10px;
+  width: 10px;
+  height: 10px;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.star-icon.active {
+  color: #ffd700;
+}
+
+/* Phygital Tag */
+.phygital-tag {
+  position: absolute;
+  top: 28px;
+  right: 4px;
+  background: #ff2d20;
+  color: white;
+  font-size: 8px;
+  font-weight: bold;
+  padding: 2px 4px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  z-index: 5;
+}
+
+/* Rarity Styles & Animations */
+.rarity-1 .sticker-inner { border-color: #94a3b8; }
+
+.rarity-2 .sticker-inner { 
+  border-color: #3b82f6; 
+  box-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
+}
+.rarity-2:active { animation: pulse-soft 0.5s ease; }
+
+.rarity-3 .sticker-inner { border-color: #8b5cf6; }
+.rarity-3:hover .sticker-inner { 
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+  animation: particles-float 2s infinite ease-in-out;
+}
+
+.rarity-4 .sticker-inner { 
+  border-color: #fbbf24; 
+  box-shadow: 0 0 15px rgba(251, 191, 36, 0.5);
+}
+.rarity-4 .sticker-header { background: #b45309; }
+.rarity-4.revealed .sticker-inner {
+  animation: golden-flames 3s infinite alternate;
+}
+
+.rarity-5 .sticker-inner { 
+  border-color: #ff2d20;
+  background: linear-gradient(135deg, #ff2d20, #ff6b00, #ffd700);
+  box-shadow: 0 0 20px rgba(255, 45, 32, 0.6);
+}
+.rarity-5 .sticker-header { background: #ff2d20; }
+.rarity-5.revealed .sticker-inner {
+  animation: furious-holographic 5s infinite linear;
+}
+
+/* Animations */
+@keyframes pulse-soft {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes particles-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes golden-flames {
+  0% { box-shadow: 0 0 10px #fbbf24, 0 0 20px #f59e0b; }
+  100% { box-shadow: 0 0 20px #fbbf24, 0 0 40px #f59e0b, 0 0 60px #d97706; }
+}
+
+@keyframes furious-holographic {
+  0% { filter: hue-rotate(0deg) brightness(1); }
+  50% { filter: hue-rotate(15deg) brightness(1.2); }
+  100% { filter: hue-rotate(0deg) brightness(1); }
+}
+
+@keyframes holo-slide {
+  0% { background-position: -200% -200%; }
+  100% { background-position: 200% 200%; }
+}
+
+/* Overlays */
+.flame-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 120%, rgba(251, 191, 36, 0.4) 0%, transparent 70%);
+  z-index: 4;
+  mix-blend-mode: screen;
+}
+
+.holographic-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(135deg, 
+    rgba(255,255,255,0) 0%, 
+    rgba(255,255,255,0.3) 45%, 
+    rgba(255,255,255,0.5) 50%, 
+    rgba(255,255,255,0.3) 55%, 
+    rgba(255,255,255,0) 100%);
+  background-size: 250% 250%;
+  animation: holo-slide 4s infinite linear;
+  z-index: 5;
+  mix-blend-mode: overlay;
+}
+
+/* Collected vs Not Collected */
+.not-collected {
+  filter: grayscale(100%) brightness(0.5);
+  opacity: 0.7;
+}
+
+.collected {
+  filter: none;
+  opacity: 1;
+}
+
+/* Phygital Border */
+.phygital .sticker-inner {
+  border: 2px dashed #ff2d20;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .sticker-card, .sticker-inner, .holographic-overlay {
+    transition: none !important;
+    animation: none !important;
+  }
+}

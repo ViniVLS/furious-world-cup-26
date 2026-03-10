@@ -1,0 +1,150 @@
+<div class="quiz-page p-6 max-w-3xl mx-auto">
+
+    <!-- ══ FASE: IDLE — Tela inicial ══ -->
+    @if (phase() === 'idle') {
+    <div class="quiz-intro text-center py-12">
+        <div class="quiz-intro-icon mb-6">⚡</div>
+        <h1 class="text-5xl font-bold font-display gradient-text mb-4">QUIZ FÚRIA</h1>
+        <p class="text-xl text-gray-300 mb-2">Teste seus conhecimentos sobre as Copas 2022 e 2026</p>
+        <p class="text-sm text-muted mb-8">10 perguntas • 30s cada • Streak x2 • Ganhe Fúria Coins!</p>
+
+        <div class="quiz-rules-grid mb-10">
+            <div class="rule-card">
+                <mat-icon class="text-fury">timer</mat-icon>
+                <h3>Timer 30s</h3>
+                <p>Quanto mais rápido, mais pontos</p>
+            </div>
+            <div class="rule-card">
+                <mat-icon class="text-gold">local_fire_department</mat-icon>
+                <h3>Streak x2</h3>
+                <p>2+ acertos seguidos = pontuação dobrada</p>
+            </div>
+            <div class="rule-card">
+                <mat-icon class="text-fury">monetization_on</mat-icon>
+                <h3>Fúria Coins</h3>
+                <p>Cada 10 pontos = 1 coin de recompensa</p>
+            </div>
+        </div>
+
+        <button class="btn-primary-large px-16 py-4 text-xl" (click)="startQuiz()" id="btn-start-quiz">
+            <mat-icon class="mr-2">sports_soccer</mat-icon> INICIAR QUIZ
+        </button>
+    </div>
+    }
+
+    <!-- ══ FASE: ACTIVE — Pergunta em andamento ══ -->
+    @if (phase() === 'active' && currentQuestion()) {
+    <div class="quiz-active">
+        <!-- Cabeçalho com progresso e streak -->
+        <div class="quiz-header mb-4">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+                <span class="text-sm text-muted font-bold">PERGUNTA {{ currentQuestionIndex() + 1 }}/{{ questions.length
+                    }}</span>
+
+                <!-- SK04 — Streak badge -->
+                @if (streak() > 0) {
+                <div class="streak-badge" [class.streak-badge--active]="streak() >= 2">
+                    <mat-icon>local_fire_department</mat-icon>
+                    <span>{{ streak() }}x STREAK{{ streak() >= 2 ? ' ×2 ATIVO!' : '' }}</span>
+                </div>
+                }
+
+                <span class="font-bold text-fury">{{ totalScore() }} pts</span>
+            </div>
+
+            <!-- Barra de progresso das perguntas -->
+            <div class="questions-track mt-2">
+                <div class="questions-fill" [style.width.%]="((currentQuestionIndex()) / questions.length) * 100"></div>
+            </div>
+        </div>
+
+        <!-- Timer circular + percentual -->
+        <div class="timer-section mb-6">
+            <div class="timer-circle" [style.--pct]="timerPct()" [style.--color]="timerColor()">
+                <span class="timer-number" [class.timer-critical]="timeLeft() <= 10">{{ timeLeft() }}</span>
+            </div>
+        </div>
+
+        <!-- Categoria e dificuldade -->
+        <div class="flex gap-2 mb-4 flex-wrap">
+            <span class="tag-category">{{ currentQuestion().category }}</span>
+            <span class="tag-difficulty" [ngClass]="'diff--' + currentQuestion().difficulty">
+                {{ currentQuestion().difficulty === 'easy' ? '🟢 Fácil' : currentQuestion().difficulty === 'medium' ?
+                '🟡 Médio' : '🔴 Difícil' }}
+            </span>
+            @if (streak() >= 2) {
+            <span class="tag-multiplier">⚡ x2 ATIVO</span>
+            }
+        </div>
+
+        <!-- Pergunta -->
+        <h2 class="text-2xl font-bold text-white mb-6 leading-tight">{{ currentQuestion().question }}</h2>
+
+        <!-- Opções de resposta -->
+        <div class="answers-grid">
+            @for (option of currentQuestion().options; track i; let i = $index) {
+            <button class="answer-btn" [ngClass]="getAnswerClass(i)" (click)="selectAnswer(i)"
+                [disabled]="isAnswerRevealed()">
+                <span class="answer-letter">{{ ['A', 'B', 'C', 'D'][i] }}</span>
+                <span class="answer-text">{{ option }}</span>
+                @if (isAnswerRevealed() && i === currentQuestion().correctIndex) {
+                <mat-icon class="answer-icon">check_circle</mat-icon>
+                }
+                @if (isAnswerRevealed() && i === selectedAnswer() && i !== currentQuestion().correctIndex) {
+                <mat-icon class="answer-icon">cancel</mat-icon>
+                }
+            </button>
+            }
+        </div>
+
+        <!-- Feedback pós-resposta -->
+        @if (isAnswerRevealed()) {
+        <div class="answer-feedback" [class.feedback--correct]="selectedAnswer() === currentQuestion().correctIndex"
+            [class.feedback--wrong]="selectedAnswer() !== currentQuestion().correctIndex">
+            @if (selectedAnswer() === -1) {
+            ⏰ Tempo esgotado! A resposta era: <strong>{{ currentQuestion().options[currentQuestion().correctIndex]
+                }}</strong>
+            } @else if (selectedAnswer() === currentQuestion().correctIndex) {
+            ✅ Correto! {{ streak() >= 2 ? '🔥 STREAK x2 ATIVO!' : '' }}
+            } @else {
+            ❌ Errado. A resposta certa era: <strong>{{ currentQuestion().options[currentQuestion().correctIndex]
+                }}</strong>
+            }
+        </div>
+        }
+    </div>
+    }
+
+    <!-- ══ FASE: FINISHED — Resultado final ══ -->
+    @if (phase() === 'finished') {
+    <div class="quiz-result text-center py-8">
+        <div class="result-rank mb-4">{{ rank }}</div>
+        <h2 class="text-4xl font-bold gradient-text mb-2">{{ totalScore() }} PONTOS</h2>
+        <p class="text-muted mb-6">{{ correctAnswers() }}/{{ questions.length }} acertos · Max Streak: {{ maxStreak()
+            }}x</p>
+
+        <!-- Coins ganhos -->
+        <div class="coins-earned">
+            <mat-icon class="text-fury">monetization_on</mat-icon>
+            <span>+{{ coinsEarned }} Fúria Coins ganhos!</span>
+        </div>
+
+        <!-- Placar por pergunta -->
+        <div class="score-list mt-8 text-left">
+            <h3 class="text-sm font-bold text-muted uppercase mb-3">Detalhamento</h3>
+            @for (round of roundScores; track round.question) {
+            <div class="score-row" [class.score-row--correct]="round.correct" [class.score-row--wrong]="!round.correct">
+                <span class="score-icon">{{ round.correct ? '✅' : '❌' }}</span>
+                <span class="score-q text-sm truncate flex-1">{{ round.question }}</span>
+                <span class="score-pts font-bold">{{ round.correct ? '+' + round.points : '0' }} pts</span>
+            </div>
+            }
+        </div>
+
+        <button class="btn-primary-large mt-8 px-12 py-3" (click)="startQuiz()">
+            <mat-icon class="mr-2">refresh</mat-icon> JOGAR NOVAMENTE
+        </button>
+    </div>
+    }
+
+</div>

@@ -1,0 +1,43 @@
+.pack-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pack-container {
+  width: 200px;
+  height: 280px;
+  background: var(--grad-hero);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-card);
+  transition: transform var(--transition-normal);
+}
+
+.pack-container:hover {
+  transform: scale(1.05) translateY(-10px);
+}
+
+.pack-container.opening {
+  animation: shake 0.5s ease-in-out infinite, fadeOut 1s 1s forwards;
+  pointer-events: none;
+}
+
+.pack-visual {
+  color: white;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px) rotate(-2deg); }
+  75% { transform: translateX(5px) rotate(2deg); }
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; transform: scale(1.5); }
+}

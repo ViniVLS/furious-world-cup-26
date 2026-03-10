@@ -1,0 +1,55 @@
+<div class="sticker-card" 
+     [ngClass]="{
+       'collected': isCollected, 
+       'not-collected': !isCollected, 
+       'revealed': isRevealed,
+       'rarity-1': sticker.rarity === 1, 
+       'rarity-2': sticker.rarity === 2, 
+       'rarity-3': sticker.rarity === 3, 
+       'rarity-4': sticker.rarity === 4, 
+       'rarity-5': sticker.rarity === 5, 
+       'phygital': sticker.isPhysicalEdition
+     }">
+  <div class="sticker-inner">
+    <div class="sticker-front">
+      <!-- Header: Number and Flag -->
+      <div class="sticker-header">
+        <span class="sticker-number">{{ sticker.code.split('-').pop() }}</span>
+        <span class="sticker-flag">{{ sticker.country || 'FIFA' }}</span>
+      </div>
+
+      <!-- Main Area: Player Photo -->
+      <div class="sticker-photo-container">
+        @if (isCollected || showDetails) {
+          <img [src]="sticker.imageUrl" [alt]="sticker.name" referrerpolicy="no-referrer" class="sticker-image" />
+        }
+        @if (!isCollected && !showDetails) {
+          <div class="sticker-silhouette">
+            <mat-icon class="text-4xl opacity-20">person</mat-icon>
+          </div>
+        }
+      </div>
+
+      <!-- Footer: Name, Position, Country, Rarity -->
+      <div class="sticker-footer">
+        <div class="sticker-name">{{ sticker.name }}</div>
+        <div class="sticker-subtitle">
+          {{ sticker.player?.position || 'ST' }} | {{ sticker.country || 'INT' }}
+        </div>
+        <div class="sticker-rarity-stars">
+          @for (i of [1,2,3,4,5]; track i) {
+            <mat-icon class="star-icon" [class.active]="i <= sticker.rarity">star</mat-icon>
+          }
+        </div>
+      </div>
+
+      @if (sticker.isPhysicalEdition) {
+        <div class="phygital-tag">Edição Física</div>
+      }
+
+      <!-- Special Effects Overlays -->
+      @if (sticker.rarity === 4) { <div class="flame-overlay"></div> }
+      @if (sticker.rarity === 5) { <div class="holographic-overlay"></div> }
+    </div>
+  </div>
+</div>

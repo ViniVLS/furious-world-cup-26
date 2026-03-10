@@ -1,0 +1,30 @@
+<div class="hall-of-fame-page p-6">
+  <h1 class="text-4xl font-bold mb-8">Hall da Fama</h1>
+
+  <div class="tabs-container mb-8">
+    @for (tab of tabs; track tab.id) {
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === tab.id"
+        (click)="setTab(tab.id)">
+        <mat-icon class="mr-2">{{ tab.icon }}</mat-icon>
+        {{ tab.name }}
+      </button>
+    }
+  </div>
+
+  <div class="ranking-list">
+    @for (user of topUsers; track user.rank) {
+      <div class="ranking-item">
+        <div class="rank-number" [ngClass]="'rank-' + user.rank">{{ user.rank }}</div>
+        <div class="user-info">
+          <span class="font-bold text-lg">{{ user.username }}</span>
+        </div>
+        <div class="score-info">
+          <span class="font-stats text-2xl font-bold">{{ user.score }}</span>
+          <span class="text-muted text-sm ml-1">pts</span>
+        </div>
+      </div>
+    }
+  </div>
+</div>

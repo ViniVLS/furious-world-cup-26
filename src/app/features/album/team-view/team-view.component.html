@@ -1,0 +1,83 @@
+<div class="team-view p-6" [ngClass]="'team-phase--' + phase()">
+
+  <!-- SK07 — Overlay de Conclusão (aparece quando a seleção é completada) -->
+  @if (showCompletionOverlay()) {
+  <div class="completion-overlay" (click)="dismissOverlay()">
+    <!-- Confete CSS (20 peças animadas) -->
+    @if (showConfetti()) {
+    <div class="confetti-container" aria-hidden="true">
+      @for (i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]; track i) {
+      <div class="confetti-piece" [style.--i]="i"
+        [style.--color]="i % 3 === 0 ? 'var(--color-fury)' : i % 3 === 1 ? '#FFD700' : 'var(--color-gold)'"></div>
+      }
+    </div>
+    }
+    <div class="completion-card" (click)="$event.stopPropagation()">
+      <div class="completion-icon">🏆</div>
+      <h2 class="completion-title gradient-text">ÁLBUM COMPLETO!</h2>
+      <p class="completion-subtitle">{{ countryCode }} · Copa {{ edition }}</p>
+      <p class="completion-desc">Você colou todas as figurinhas desta seleção.<br>Parabéns, colecionador lendário!</p>
+      <button class="btn-primary mt-6 px-8 py-3 text-lg" (click)="dismissOverlay()">
+        <mat-icon class="mr-2">celebration</mat-icon> Incrível!
+      </button>
+    </div>
+  </div>
+  }
+
+  <!-- Cabeçalho com navegação -->
+  <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
+    <div class="flex items-center gap-4">
+      <a [routerLink]="['/album', edition]" class="back-btn">
+        <mat-icon>arrow_back</mat-icon>
+      </a>
+      <div>
+        <h1 class="text-4xl font-bold font-display">{{ countryCode }}</h1>
+        <p class="text-muted text-sm">Copa {{ edition }}</p>
+      </div>
+    </div>
+
+    <!-- SK07 — Badge de fase -->
+    <div class="phase-badge" [ngClass]="'phase-badge--' + phase()">
+      @switch (phase()) {
+      @case ('complete') { <mat-icon>emoji_events</mat-icon> <span>COMPLETO ✅</span> }
+      @case ('most') { <mat-icon>local_fire_department</mat-icon> <span>QUASE LÁ 🔥</span> }
+      @case ('partial') { <mat-icon>collections</mat-icon> <span>EM PROGRESSO</span> }
+      @default { <mat-icon>lock</mat-icon> <span>BLOQUEADA</span> }
+      }
+    </div>
+  </div>
+
+  <!-- SK07 — Barra de progresso com % e label dinâmicos -->
+  <div class="progress-section mb-8 bg-gray-900 rounded-2xl p-4 border border-gray-800">
+    <div class="flex justify-between text-sm mb-2">
+      <span class="text-gray-400">{{ progressLabel() }}</span>
+      <span class="font-bold"
+        [ngClass]="phase() === 'complete' ? 'text-yellow-400' : phase() === 'most' ? 'text-fury' : 'text-gray-300'">
+        {{ progressPct() }}%
+      </span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" [style.width.%]="progressPct()" [ngClass]="'progress-fill--' + phase()">
+      </div>
+    </div>
+    <p class="text-xs text-gray-600 mt-2">{{ progress().collected }}/{{ progress().total }} figurinhas coladas no álbum
+    </p>
+  </div>
+
+  <!-- Grade de figurinhas com classes de fase -->
+  <div class="stickers-grid">
+    @for (item of stickers; track item.sticker.id) {
+    <a [routerLink]="['/album/sticker', item.sticker.id]" class="sticker-link"
+      [ngClass]="getStickerPhaseClass(item.collected)">
+      <app-sticker-card [sticker]="item.sticker" [isCollected]="item.collected" [showDetails]="false">
+      </app-sticker-card>
+
+      <!-- SK07 — Selo "COLADO" para figurinhas na fase COMPLETE -->
+      @if (item.collected && phase() === 'complete') {
+      <div class="collected-badge">✅</div>
+      }
+    </a>
+    }
+  </div>
+
+</div>

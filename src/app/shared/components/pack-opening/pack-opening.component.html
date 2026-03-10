@@ -1,0 +1,103 @@
+<div class="pack-opening-overlay" [class.flash]="showFlash">
+  @if (!isFirstTime && step >= 2 && step <= 6) { <button class="skip-btn" (click)="skipAnimation()">
+    PULAR ANIMAÇÃO <mat-icon>skip_next</mat-icon>
+    </button>
+    }
+
+    @if (step === 1) {
+    @if (showSkeleton) {
+    <div class="loading-skeleton">
+      <div class="skeleton-pack pulse"></div>
+      <div class="loading-text text-fury font-bold text-2xl mt-4 uppercase tracking-widest">Preparando pacote...</div>
+    </div>
+    }
+    }
+
+    @if (step === 2 || step === 3) {
+    <div class="pack-wrapper" [class.tearing]="step === 3" (click)="openPack()" (keydown.enter)="openPack()"
+      tabindex="0">
+      <div class="pack-visual" [ngClass]="packType">
+        <div class="pack-inner">
+          <span class="font-display text-4xl text-white drop-shadow-lg">{{ packType | uppercase }}</span>
+          <div class="pack-tear-line"></div>
+        </div>
+      </div>
+      @if (step === 2) {
+      <p class="text-muted mt-8 text-center animate-pulse uppercase tracking-widest text-xs">Toque para abrir</p>
+      }
+    </div>
+    }
+
+    @if (step === 4 || step === 5) {
+    <div class="stickers-reveal" [class.step-4]="step >= 4" (click)="revealNext()" (keydown.enter)="revealNext()"
+      tabindex="0">
+      @if (step === 5 && currentRevealIndex < stickers.length) { <p
+        class="text-muted mb-8 text-center animate-pulse uppercase tracking-widest text-xs">
+        {{ isDramaticPause ? '...' : 'Toque para revelar' }}
+        </p>
+        }
+        <div class="stickers-cascade">
+          @for (sticker of stickers; track sticker.id; let i = $index) {
+          <div class="cascade-item" [class.revealed]="revealedStickers[i]" [style.z-index]="stickers.length - i"
+            [style.--index]="i">
+            <div class="card-flipper" [class.flipped]="revealedStickers[i]">
+              <div class="card-back">
+                <div class="pack-design" [ngClass]="packType">
+                  <div class="logo-mini">FURIOUS</div>
+                  <div class="pattern-bg"></div>
+                </div>
+              </div>
+              <div class="card-front">
+                <app-sticker-card [sticker]="sticker" [isCollected]="true"
+                  [isRevealed]="revealedStickers[i]"></app-sticker-card>
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+    </div>
+    }
+
+    @if (step === 6) {
+    <div class="celebration-screen text-center">
+      <div class="confetti-container">
+        @for (i of [1,2,3,4,5,6,7,8,9,10]; track i) {
+        <div class="confetti-piece"></div>
+        }
+      </div>
+      <h2 class="text-6xl font-bold text-gold mb-4 font-display animate-bounce tracking-tighter">LENDÁRIA!</h2>
+      <p class="text-xl text-white uppercase tracking-widest opacity-80">Você tirou a sorte grande!</p>
+    </div>
+    }
+
+    @if (step === 7) {
+    <div class="summary-screen text-center">
+      <h2 class="text-4xl font-bold mb-12 font-display uppercase tracking-widest">Resumo do Pacote</h2>
+      <div class="flex gap-12 justify-center mb-12">
+        <div class="summary-stat">
+          <div class="stat-circle bg-cyan/10 border-cyan/20">
+            <span class="text-4xl font-bold text-cyan">{{ newCount }}</span>
+          </div>
+          <span class="text-muted uppercase text-xs mt-4 tracking-widest">Novas ✨</span>
+        </div>
+        <div class="summary-stat">
+          <div class="stat-circle bg-gold/10 border-gold/20">
+            <span class="text-4xl font-bold text-gold">{{ duplicateCount }}</span>
+          </div>
+          <span class="text-muted uppercase text-xs mt-4 tracking-widest">Repetidas 🔄</span>
+        </div>
+      </div>
+      <button class="btn-primary-large w-full" (click)="finish()">GUARDAR TUDO</button>
+    </div>
+    }
+
+    @if (step === 8) {
+    <div class="loading-text text-fury font-bold text-2xl uppercase tracking-widest animate-pulse">Salvando no álbum...
+    </div>
+    }
+
+    @if (showConfetti) {
+    <div class="global-confetti"></div>
+    }
+
+</div>

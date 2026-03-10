@@ -1,0 +1,21 @@
+<div class="team-step text-center">
+  <h2 class="text-3xl font-bold mb-6">Escolha sua Seleção</h2>
+  <div class="grid grid-cols-2 gap-4 mb-8">
+    @for (team of teams; track team.code) {
+      <div 
+        class="team-card" 
+        [class.selected]="selectedTeam === team.code"
+        (click)="selectTeam(team.code)"
+        (keydown.enter)="selectTeam(team.code)"
+        tabindex="0">
+        <span class="font-bold">{{ team.name }}</span>
+      </div>
+    }
+  </div>
+  <button 
+    class="btn-primary" 
+    [disabled]="!selectedTeam" 
+    (click)="next.emit()">
+    Essa é a minha!
+  </button>
+</div>

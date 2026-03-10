@@ -1,0 +1,21 @@
+<div class="album-home p-6">
+  <h1 class="text-4xl font-bold mb-8">Meu Álbum</h1>
+
+  <div class="editions-grid">
+    <a routerLink="/album/2026" class="edition-card edition-2026">
+      <div class="edition-content">
+        <h2 class="text-3xl font-display mb-2">Copa 2026</h2>
+        <p class="text-muted mb-4">USA / CAN / MEX</p>
+        <app-progress-bar [progress]="progress2026" label="Conclusão"></app-progress-bar>
+      </div>
+    </a>
+
+    <a routerLink="/album/2022" class="edition-card edition-2022">
+      <div class="edition-content">
+        <h2 class="text-3xl font-display mb-2">Copa 2022</h2>
+        <p class="text-muted mb-4">Qatar</p>
+        <app-progress-bar [progress]="progress2022" label="Conclusão"></app-progress-bar>
+      </div>
+    </a>
+  </div>
+</div>

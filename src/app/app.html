@@ -1,0 +1,10 @@
+<div class="app-container">
+  <main class="main-content" [class.no-nav]="!showBottomNav()">
+    <router-outlet />
+  </main>
+  @if (showBottomNav()) {
+    <app-bottom-nav></app-bottom-nav>
+  }
+  <app-cookie-consent></app-cookie-consent>
+</div>
+

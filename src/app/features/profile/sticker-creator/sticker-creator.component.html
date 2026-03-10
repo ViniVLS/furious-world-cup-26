@@ -1,0 +1,161 @@
+<div class="creator-page p-6 max-w-6xl mx-auto">
+
+  <!-- Toast de Feedback -->
+  @if (toastMessage()) {
+  <div
+    class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-gray-800 border border-gray-600 text-white px-6 py-3 rounded-2xl shadow-2xl text-sm font-semibold animate-fade-in">
+    {{ toastMessage() }}
+  </div>
+  }
+
+  <div class="mb-8">
+    <h1 class="text-4xl font-bold font-display">Criar Figurinha Lendária</h1>
+    <p class="text-muted">Faça sua própria figurinha personalizada. Esta figurinha ficará na sua "Minha Coleção" e não
+      entra no álbum oficial.</p>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-12">
+    <!-- Controls -->
+    <div class="controls-section bg-gray-900 p-6 rounded-2xl border border-gray-800">
+      <h2 class="text-2xl font-bold mb-6">Personalize</h2>
+
+      <div class="form-group mb-4">
+        <label for="photo-upload" class="block text-sm text-gray-400 mb-2">Sua Foto</label>
+        <div class="flex gap-4 items-center flex-wrap">
+          <label for="photo-upload"
+            class="btn-secondary cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-800 rounded-lg border border-gray-700 hover:bg-gray-700">
+            <mat-icon>upload</mat-icon> Escolher Imagem
+            <input id="photo-upload" type="file" accept="image/*" class="hidden" (change)="onFileSelected($event)">
+          </label>
+
+          @if (uploadedImage && !bgRemoved) {
+          <button class="btn-primary text-sm py-2 px-4" (click)="removeBackground()" [disabled]="isRemovingBg">
+            @if (isRemovingBg) {
+            <mat-icon class="animate-spin text-sm mr-1">autorenew</mat-icon> Removendo Fundo...
+            } @else {
+            <mat-icon class="text-sm mr-1">auto_fix_high</mat-icon> Remover Fundo (IA)
+            }
+          </button>
+          }
+        </div>
+      </div>
+
+      <div class="form-group mb-4">
+        <label for="player-name" class="block text-sm text-gray-400 mb-2">Nome na Camisa</label>
+        <input id="player-name" type="text" [(ngModel)]="name"
+          class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-fury focus:outline-none uppercase"
+          maxlength="15">
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <div class="form-group">
+          <label for="player-country" class="block text-sm text-gray-400 mb-2">Seleção</label>
+          <select id="player-country" [(ngModel)]="country"
+            class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-fury focus:outline-none">
+            @for (c of countries; track c.code) {
+            <option [value]="c.code">{{ c.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="player-position" class="block text-sm text-gray-400 mb-2">Posição</label>
+          <select id="player-position" [(ngModel)]="position"
+            class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-fury focus:outline-none">
+            @for (p of positions; track p) {
+            <option [value]="p">{{ p }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <div class="form-group">
+          <label for="player-number" class="block text-sm text-gray-400 mb-2">Número</label>
+          <input id="player-number" type="number" [(ngModel)]="number"
+            class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-fury focus:outline-none"
+            min="1" max="99">
+        </div>
+        <div class="form-group">
+          <label for="player-rarity" class="block text-sm text-gray-400 mb-2">Raridade</label>
+          <select id="player-rarity" [(ngModel)]="rarity"
+            class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-fury focus:outline-none">
+            <option value="common">Comum</option>
+            <option value="special">Especial</option>
+            <option value="epic">Épica</option>
+            <option value="legendary">Lendária</option>
+            <option value="furious">FURIOUS</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex gap-4 mt-8">
+        <button class="btn-primary flex-1 flex items-center justify-center gap-2" (click)="downloadSticker()"
+          [disabled]="isDownloading()" id="btn-download-sticker">
+          @if (isDownloading()) {
+          <mat-icon class="animate-spin text-sm">autorenew</mat-icon> Gerando PNG...
+          } @else {
+          <mat-icon>download</mat-icon> Baixar PNG
+          }
+        </button>
+        <button
+          class="bg-[#25D366] text-white rounded-xl px-6 font-bold flex items-center gap-2 hover:bg-opacity-80 transition-all"
+          (click)="shareSticker()" [disabled]="isSharing()" id="btn-share-sticker">
+          @if (isSharing()) {
+          <mat-icon class="animate-spin text-sm">autorenew</mat-icon>
+          } @else {
+          <mat-icon>share</mat-icon> Compartilhar
+          }
+        </button>
+      </div>
+
+      <p class="text-xs text-gray-600 mt-3 text-center">
+        <mat-icon class="text-xs align-middle">info</mat-icon>
+        Figurinhas criadas aqui não entram no álbum oficial. Marca d'água aplicada automaticamente.
+      </p>
+    </div>
+
+    <!-- Preview -->
+    <div
+      class="preview-section flex flex-col items-center justify-center bg-gray-900 p-8 rounded-2xl border border-gray-800 relative overflow-hidden">
+      <!-- Watermark Background -->
+      <div
+        class="absolute inset-0 opacity-5 pointer-events-none flex flex-wrap items-center justify-center gap-8 overflow-hidden">
+        @for (i of [1,2,3,4,5,6,7,8,9]; track i) {
+        <span class="text-4xl font-bold rotate-[-45deg] whitespace-nowrap">FAN MADE</span>
+        }
+      </div>
+
+      <h3 class="text-gray-400 mb-6 uppercase tracking-widest text-sm font-bold">Preview em Tempo Real</h3>
+
+      <!-- #stickerPreviewEl é o alvo do html-to-image para captura real -->
+      <div #stickerPreviewEl class="custom-sticker-wrapper" [ngClass]="rarity">
+        <div class="custom-sticker-inner">
+          <div class="custom-sticker-bg"></div>
+
+          @if (uploadedImage) {
+          <img [src]="uploadedImage" class="custom-sticker-photo" [class.bg-removed]="bgRemoved" alt="Sua foto">
+          } @else {
+          <div class="custom-sticker-placeholder">
+            <mat-icon class="text-6xl text-gray-600">person</mat-icon>
+          </div>
+          }
+
+          <div class="custom-sticker-overlay">
+            <div class="custom-sticker-header">
+              <span class="custom-sticker-country">{{ country }}</span>
+              <span class="custom-sticker-number">{{ number }}</span>
+            </div>
+
+            <div class="custom-sticker-footer">
+              <span class="custom-sticker-name">{{ name }}</span>
+              <span class="custom-sticker-position">{{ position }}</span>
+            </div>
+          </div>
+
+          <!-- Mandatory Watermark (SK07) -->
+          <div class="watermark">FURIOUS WC26 - Fan Made</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

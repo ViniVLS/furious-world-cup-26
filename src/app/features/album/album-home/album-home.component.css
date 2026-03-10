@@ -1,0 +1,47 @@
+.album-home {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.editions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.edition-card {
+  display: block;
+  background-color: var(--color-graphite);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  position: relative;
+}
+
+.edition-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-card);
+}
+
+.edition-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+.edition-2026::before {
+  background: var(--grad-hero);
+}
+
+.edition-2022::before {
+  background: var(--color-gold);
+}
+
+.edition-content {
+  padding: 24px;
+}

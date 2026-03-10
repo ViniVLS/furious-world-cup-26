@@ -1,0 +1,22 @@
+<div class="edition-view p-6">
+  <div class="flex items-center mb-8">
+    <a routerLink="/album" class="back-btn mr-4">
+      <mat-icon>arrow_back</mat-icon>
+    </a>
+    <h1 class="text-4xl font-bold">Copa {{ edition }}</h1>
+  </div>
+
+  <div class="teams-grid">
+    @for (team of teams; track team.code) {
+      <a [routerLink]="['/album', edition, team.code]" class="team-card">
+        <div class="team-info">
+          <span class="text-xl font-bold">{{ team.name }}</span>
+          <span class="text-muted">{{ team.progress }}%</span>
+        </div>
+        <div class="progress-bar-mini">
+          <div class="progress-fill" [style.width.%]="team.progress"></div>
+        </div>
+      </a>
+    }
+  </div>
+</div>

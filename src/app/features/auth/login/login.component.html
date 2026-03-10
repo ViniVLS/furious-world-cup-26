@@ -1,0 +1,47 @@
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-header">
+      <h1 class="login-logo">
+        <span class="gradient-text">FURIOUS WORLD CUP </span><span class="text-gold">26</span>
+      </h1>
+      <p class="login-subtitle">A GLÓRIA ESPERA POR VOCÊ</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="email" class="form-label text-fury">SEU E-MAIL DE CONVOCAÇÃO</label>
+        <input 
+          type="email" 
+          id="email" 
+          formControlName="email" 
+          class="form-input" 
+          placeholder="viniedoug@gmail.com"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label text-fury">SENHA DE ACESSO AO VESTIÁRIO</label>
+        <input 
+          type="password" 
+          id="password" 
+          formControlName="password" 
+          class="form-input" 
+          placeholder="••••••••"
+        >
+      </div>
+
+      <button type="submit" class="btn-submit" [disabled]="loginForm.invalid">
+        ENTRAR NA FÚRIA <span class="arrow">→</span>
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <p class="register-link">
+        AINDA NÃO FOI CONVOCADO? <a routerLink="/auth/register" class="text-fury">CADASTRE-SE</a>
+      </p>
+      <p class="emergency-link">
+        🚨 FALHA NA CONEXÃO? TENTE O LOGIN DE EMERGÊNCIA
+      </p>
+    </div>
+  </div>
+</div>

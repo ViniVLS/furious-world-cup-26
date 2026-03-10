@@ -1,0 +1,14 @@
+<div class="onboarding-container">
+  @if (currentStep === 1) {
+    <app-step-welcome (next)="nextStep()"></app-step-welcome>
+  }
+  @if (currentStep === 2) {
+    <app-step-team (next)="nextStep()"></app-step-team>
+  }
+  @if (currentStep === 3) {
+    <app-step-first-pack (next)="nextStep()"></app-step-first-pack>
+  }
+  @if (currentStep === 4) {
+    <app-step-album-preview></app-step-album-preview>
+  }
+</div>

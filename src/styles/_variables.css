@@ -1,0 +1,56 @@
+/* ─────────────────────────────────────────────
+   FURIOUS WC26 — Design Tokens Globais
+   ───────────────────────────────────────────── */
+:root {
+  /* Cores principais */
+  --color-fury:     #FF2D20;   /* Vermelho Fúria — primária */
+  --color-gold:     #FFD700;   /* Dourado Copa — secundária */
+  --color-night:    #0A0A1A;   /* Background — dark mode default */
+  --color-graphite: #1E1E2E;   /* Cards e superfícies */
+  --color-text:     #F0F0F0;   /* Texto principal */
+  --color-cyan:     #00E5FF;   /* Accent e highlights */
+  --color-muted:    #6B7280;   /* Texto secundário */
+
+  /* Gradientes */
+  --grad-hero:      linear-gradient(135deg, #FF2D20, #FFD700);
+  --grad-rare:      linear-gradient(135deg, #6B21A8, #A855F7);
+  --grad-legendary: linear-gradient(135deg, #B45309, #FDE68A, #B45309);
+  --grad-furious:   linear-gradient(135deg, #FF2D20, #FF6B00, #FFD700);
+
+  /* Cores por raridade */
+  --rarity-1: #9CA3AF;   /* Comum — cinza */
+  --rarity-2: #3B82F6;   /* Especial — azul */
+  --rarity-3: #8B5CF6;   /* Épica — roxo */
+  --rarity-4: #F59E0B;   /* Lendária — dourado */
+  --rarity-5: #FF2D20;   /* FURIOUS — vermelho holográfico */
+
+  /* Tipografia */
+  --font-display:   'Bebas Neue', sans-serif;
+  --font-body:      'Inter', sans-serif;
+  --font-stats:     'Oswald', sans-serif;
+
+  /* Figurinha — proporção Panini obrigatória */
+  --sticker-ratio:  1 / 1.4;
+  --sticker-sm:     80px;
+  --sticker-md:     120px;
+  --sticker-lg:     240px;
+
+  /* Acessibilidade */
+  --touch-min:      44px;      /* Área mínima de toque */
+  --screen-min:     320px;     /* iPhone SE */
+
+  /* Sombras */
+  --shadow-card:    0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-sticker: 0 8px 32px rgba(255, 45, 32, 0.3);
+
+  /* Transições */
+  --transition-fast:   150ms ease;
+  --transition-normal: 300ms ease;
+  --transition-slow:   600ms ease;
+
+  /* Border radius */
+  --radius-sm:  8px;
+  --radius-md:  12px;
+  --radius-lg:  20px;
+  --radius-xl:  32px;
+}

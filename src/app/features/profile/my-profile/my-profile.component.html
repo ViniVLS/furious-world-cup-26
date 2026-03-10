@@ -1,0 +1,74 @@
+<div class="profile-page p-6">
+  <div class="profile-header mb-8">
+    <div class="avatar-container">
+      <div class="avatar">{{ user.username.charAt(0) }}</div>
+    </div>
+    <div class="profile-info">
+      <h1 class="text-4xl font-bold">{{ user.username }}</h1>
+      <p class="text-muted">{{ user.country }} • Reputação {{ user.reputation }}</p>
+    </div>
+    <div class="profile-actions flex gap-4">
+      <div class="bg-gray-800 px-4 py-2 rounded-xl border border-gray-700 flex items-center gap-2">
+        <mat-icon class="text-gold">monetization_on</mat-icon>
+        <span class="font-bold text-xl">{{ currentUser()?.furyCoins }}</span>
+      </div>
+      <button class="btn-secondary" routerLink="/profile/settings">
+        <mat-icon>settings</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="stats-card mb-8">
+    <app-progress-bar [progress]="user.progress" label="Progresso Total"></app-progress-bar>
+  </div>
+
+  <div class="mb-8">
+    <h2 class="text-2xl font-bold mb-4">Missões Diárias</h2>
+    <div class="grid gap-4">
+      @for (mission of dailyMissions; track mission.id) {
+        <div class="bg-gray-800 p-4 rounded-xl flex justify-between items-center border border-gray-700">
+          <div>
+            <h3 class="font-bold text-lg text-white">{{ mission.title }}</h3>
+            <p class="text-sm text-gray-400">{{ mission.description }}</p>
+          </div>
+          <div class="flex flex-col items-end">
+            <span class="text-fury font-bold">+{{ mission.rewardCoins }} Coins</span>
+            @if (mission.isCompleted) {
+              <span class="text-green-500 text-sm font-bold mt-1"><mat-icon class="align-middle text-sm">check_circle</mat-icon> Concluída</span>
+            } @else {
+              <span class="text-gray-500 text-sm mt-1">Pendente</span>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="mb-8">
+    <h2 class="text-2xl font-bold mb-4">Conquistas (Badges)</h2>
+    <div class="flex flex-wrap gap-4">
+      @for (badge of badges; track badge.id) {
+        <div class="bg-gray-800 p-4 rounded-xl flex flex-col items-center border border-gray-700 w-32 text-center">
+          <div class="w-16 h-16 bg-gray-700 rounded-full mb-2 flex items-center justify-center">
+            <mat-icon class="text-gold" style="font-size: 32px; width: 32px; height: 32px;">emoji_events</mat-icon>
+          </div>
+          <h3 class="font-bold text-sm text-white">{{ badge.name }}</h3>
+          <p class="text-xs text-gray-400 mt-1">{{ badge.rarity }}</p>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="actions-grid">
+    <a routerLink="/profile/creator" class="action-card">
+      <mat-icon class="text-fury mb-2" style="font-size: 32px; width: 32px; height: 32px;">brush</mat-icon>
+      <h3 class="font-bold">Criar Figurinha</h3>
+      <p class="text-sm text-muted">Faça sua própria figurinha</p>
+    </a>
+    <div class="action-card" (click)="convertDuplicates()" (keydown.enter)="convertDuplicates()" tabindex="0">
+      <mat-icon class="text-gold mb-2" style="font-size: 32px; width: 32px; height: 32px;">recycling</mat-icon>
+      <h3 class="font-bold">Converter Repetidas</h3>
+      <p class="text-sm text-muted">Troque repetidas por Coins</p>
+    </div>
+  </div>
+</div>

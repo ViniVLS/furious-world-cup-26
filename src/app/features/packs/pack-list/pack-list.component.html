@@ -1,0 +1,59 @@
+<div class="pack-list-page p-6">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-4xl font-bold">Loja de Pacotes</h1>
+    <div class="flex gap-4 items-center">
+      <button class="btn-secondary flex items-center gap-2" (click)="showRedeemModal = true">
+        <mat-icon>qr_code_scanner</mat-icon>
+        Resgatar Código Fúria
+      </button>
+      <div class="bg-gray-800 px-4 py-2 rounded-xl border border-gray-700 flex items-center gap-2">
+        <mat-icon class="text-gold">monetization_on</mat-icon>
+        <span class="font-bold text-xl">{{ currentUser()?.furyCoins }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="packs-grid">
+    @for (pack of packs; track pack.type) {
+      <div class="pack-card">
+        <div class="pack-visual" [ngClass]="pack.type">
+          <span class="font-display text-2xl">{{ pack.name | uppercase }}</span>
+        </div>
+        <div class="pack-info">
+          <h3 class="text-xl font-bold mb-2">{{ pack.name }}</h3>
+          <p class="text-muted mb-1">{{ pack.quantity }} figurinhas</p>
+          <p class="text-sm text-cyan mb-4">{{ pack.guarantees }}</p>
+          
+          <button class="btn-buy" (click)="buyPack(pack)" [disabled]="(currentUser()?.furyCoins || 0) < pack.coinsCost">
+            <mat-icon class="mr-1 text-gold">monetization_on</mat-icon>
+            {{ pack.coinsCost }}
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (showRedeemModal) {
+    <div class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+      <div class="bg-gray-900 border border-gray-700 rounded-2xl p-8 max-w-md w-full relative">
+        <button class="absolute top-4 right-4 text-gray-400 hover:text-white" (click)="showRedeemModal = false">
+          <mat-icon>close</mat-icon>
+        </button>
+        
+        <div class="text-center mb-6">
+          <mat-icon class="text-fury text-5xl mb-2">qr_code</mat-icon>
+          <h2 class="text-2xl font-bold font-display">Código Fúria Phygital</h2>
+          <p class="text-gray-400 text-sm mt-2">Digite o código de 12 dígitos encontrado no seu pacote físico para resgatar recompensas exclusivas.</p>
+        </div>
+
+        <div class="mb-6">
+          <input type="text" [formControl]="phygitalCodeControl" placeholder="XXXX-XXXX-XXXX" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-center text-xl font-mono text-white focus:border-fury focus:outline-none uppercase tracking-widest" maxlength="14">
+        </div>
+
+        <button class="w-full bg-fury text-white font-bold py-3 rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" [disabled]="!isValidCode()" (click)="redeemCode()">
+          RESGATAR AGORA
+        </button>
+      </div>
+    </div>
+  }
+</div>

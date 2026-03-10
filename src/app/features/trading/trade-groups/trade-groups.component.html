@@ -1,0 +1,52 @@
+<div class="trade-groups-page p-6">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-4xl font-bold">Grupos de Troca</h1>
+    <button class="btn-secondary" routerLink="/trading">Voltar à Praça</button>
+  </div>
+
+  <p class="text-muted mb-8">Junte-se a grupos para facilitar suas trocas. Máximo de 20 membros por grupo.</p>
+
+  <div class="grid gap-4">
+    @for (group of groups; track group.id) {
+    <div
+      class="bg-gray-800 p-6 rounded-xl border border-gray-700 hover:border-fury transition-colors flex justify-between items-center">
+      <div class="flex items-center gap-4">
+        <div class="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center">
+          <mat-icon class="text-gray-400" style="font-size: 32px; width: 32px; height: 32px;">group</mat-icon>
+        </div>
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <h2 class="text-xl font-bold text-white">{{ group.name }}</h2>
+            <span class="px-2 py-0.5 bg-gray-700 rounded text-xs font-bold uppercase"
+              [ngClass]="{'text-green-400': group.type === 'open', 'text-yellow-400': group.type === 'invite'}">
+              {{ group.type === 'open' ? 'Aberto' : group.type === 'invite' ? 'Convite' : 'Secreto' }}
+            </span>
+          </div>
+          <p class="text-sm text-gray-400 mb-2">{{ group.description }}</p>
+          @if (group.wishlist && group.wishlist.length > 0) {
+          <div class="wishlist-summary flex flex-wrap gap-2">
+            <span class="text-[10px] font-bold text-muted uppercase">Desejos:</span>
+            @for (item of group.wishlist; track item) {
+            <span class="px-1.5 py-0.5 bg-fury/10 text-fury rounded text-[10px] font-mono border border-fury/20">
+              {{ item }}
+            </span>
+            }
+          </div>
+          }
+        </div>
+      </div>
+
+      <div class="flex flex-col items-end gap-2">
+        <div class="text-sm font-bold"
+          [ngClass]="{'text-red-400': group.memberCount >= group.maxMembers, 'text-gray-300': group.memberCount < group.maxMembers}">
+          <mat-icon class="text-xs align-middle">person</mat-icon> {{ group.memberCount }}/{{ group.maxMembers }}
+        </div>
+        <button class="px-6 py-2 bg-fury text-white font-bold rounded hover:bg-red-600 transition-colors"
+          [disabled]="group.memberCount >= group.maxMembers">
+          {{ group.memberCount >= group.maxMembers ? 'LOTADO' : 'PARTICIPAR' }}
+        </button>
+      </div>
+    </div>
+    }
+  </div>
+</div>

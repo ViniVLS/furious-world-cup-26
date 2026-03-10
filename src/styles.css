@@ -1,0 +1,50 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@import "./styles/_variables.css";
+@import "./styles/_typography.css";
+@import "./styles/_animations.css";
+@import "./styles/_utilities.css";
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* ──────────────────────────────────────────────
+   SK07/SK08 — ACESSIBILIDADE E UX
+   ────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Desativa pulsações neon e brilhos intensos */
+  .sticker-phase--most,
+  .phase-badge--most,
+  .tag-multiplier,
+  .progress-fill--most {
+    animation: none !important;
+    box-shadow: 0 0 5px rgba(255, 107, 0, 0.5) !important;
+  }
+
+  .sticker-phase--complete {
+    animation: none !important;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5) !important;
+  }
+
+  .confetti-piece {
+    display: none !important;
+  }
+}

@@ -1,0 +1,79 @@
+.pack-list-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.packs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+}
+
+.pack-card {
+  background-color: var(--color-graphite);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition-normal);
+}
+
+.pack-card:hover {
+  transform: translateY(-5px);
+}
+
+.pack-visual {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.pack-visual.basic { background: linear-gradient(135deg, #4B5563, #9CA3AF); }
+.pack-visual.plus { background: linear-gradient(135deg, #1D4ED8, #3B82F6); }
+.pack-visual.elite { background: linear-gradient(135deg, #6B21A8, #A855F7); }
+.pack-visual.legendary { background: linear-gradient(135deg, #B45309, #F59E0B); }
+.pack-visual.copa { background: var(--grad-furious); }
+
+.pack-info {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.text-cyan {
+  color: var(--color-cyan);
+}
+
+.text-gold {
+  color: var(--color-gold);
+}
+
+.btn-buy {
+  margin-top: auto;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
+}
+
+.btn-buy:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-buy:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(100%);
+}

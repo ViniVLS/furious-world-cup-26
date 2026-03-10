@@ -1,0 +1,34 @@
+.progress-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
+
+.progress-value {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.progress-track {
+  width: 100%;
+  height: 8px;
+  background-color: var(--color-graphite);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--grad-hero);
+  border-radius: 4px;
+  transition: width var(--transition-normal);
+}
