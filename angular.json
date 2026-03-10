@@ -34,9 +34,9 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
-              },
-              "src/assets"
+                "input": "public",
+                "output": "/"
+              }
             ],
             "styles": [
               "src/styles.css"
@@ -73,6 +73,12 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "allowedHosts": [
+              "localhost",
+              "192.168.1.10"
+            ]
+          },
           "configurations": {
             "production": {
               "buildTarget": "app:build:production"

@@ -1,0 +1,12 @@
+﻿
+C:\Users\ViniciusL\Documents\Antigravity\furious-world-cup-26\src\app\features\album\team-view\team-view.component.html
+   5:3  error  click must be accompanied by either keyup, keydown or keypress event for accessibility  @angular-eslint/template/click-events-have-key-events
+   5:3  error  Elements with interaction handlers must be focusable                                    @angular-eslint/template/interactive-supports-focus
+  15:5  error  click must be accompanied by either keyup, keydown or keypress event for accessibility  @angular-eslint/template/click-events-have-key-events
+  15:5  error  Elements with interaction handlers must be focusable                                    @angular-eslint/template/interactive-supports-focus
+
+C:\Users\ViniciusL\Documents\Antigravity\furious-world-cup-26\src\app\features\challenges\quiz\quiz-furia.component.ts
+  85:5  error  Lifecycle methods should not be empty  @angular-eslint/no-empty-lifecycle-method
+
+Ô£û 5 problems (5 errors, 0 warnings)
+

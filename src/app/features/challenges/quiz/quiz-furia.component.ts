@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
+import { Component, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { UserService } from '../../../core/services/user.service';
@@ -46,7 +46,7 @@ type QuizPhase = 'idle' | 'active' | 'result' | 'finished';
     templateUrl: './quiz-furia.component.html',
     styleUrl: './quiz-furia.component.css',
 })
-export class QuizFuriaComponent implements OnInit, OnDestroy {
+export class QuizFuriaComponent implements OnDestroy {
     private userService = inject(UserService);
 
     // SK04 — Estado do quiz
@@ -81,8 +81,6 @@ export class QuizFuriaComponent implements OnInit, OnDestroy {
         if (t > 10) return '#FFA500';
         return '#FF4444';
     });
-
-    ngOnInit() { /* Quiz começa ao clicar em START */ }
 
     startQuiz() {
         // Sortear 10 perguntas aleatórias do banco de 20

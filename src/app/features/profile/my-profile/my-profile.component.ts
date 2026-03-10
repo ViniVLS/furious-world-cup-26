@@ -41,4 +41,8 @@ export class MyProfileComponent implements OnInit {
     this.userService.addCoins(coinsEarned);
     alert(`Você converteu figurinhas repetidas e ganhou ${coinsEarned} Fúria Coins!`);
   }
+
+  logout() {
+    this.userService.logout();
+  }
 }

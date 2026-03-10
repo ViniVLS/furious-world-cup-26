@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { VERSION } from '../../../../environments/version';
 
 @Component({
   selector: 'app-bottom-nav',
@@ -11,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrl: './bottom-nav.component.css'
 })
 export class BottomNavComponent {
+  version = VERSION;
   navItems = [
     { path: '/album', icon: 'book', label: 'Álbum' },
     { path: '/packs', icon: 'style', label: 'Pacotes' },

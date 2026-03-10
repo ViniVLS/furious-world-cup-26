@@ -59,14 +59,17 @@
     bottom: auto;
     border-top: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex; /* NEW: make the nav a flex container */
+    align-items: center; /* NEW: center items vertically */
+    justify-content: flex-end; /* NEW: align to the right */
+    padding: 0 24px; /* adjusted padding */
   }
   
   .nav-list {
-    max-width: 1200px;
-    margin: 0 auto;
+    margin: 0;
     justify-content: flex-end;
     gap: 32px;
-    padding: 16px 24px;
+    padding: 16px 0; /* adjusted padding */
   }
   
   .nav-item {
@@ -81,4 +84,17 @@
   .nav-label {
     font-size: 1rem;
   }
+
+  .nav-version {
+    display: flex;
+    align-items: center;
+    padding-left: 16px;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    margin-left: 16px;
+  }
+}
+
+/* Base styles for version on mobile (hidden or unobtrusive) */
+.nav-version {
+  display: none; /* Can be hidden on mobile or styled differently if preferred */
 }

@@ -30,4 +30,11 @@ const newVersion = incrementVersion(pkg.version);
 pkg.version = newVersion;
 
 fs.writeFileSync(packagePath, JSON.stringify(pkg, null, 2) + '\n');
+
+// SK01 - Update version.ts for frontend display
+const versionFilePath = path.join(__dirname, '..', 'src', 'environments', 'version.ts');
+const versionFileContent = `export const VERSION = 'v${newVersion}';\n`;
+fs.writeFileSync(versionFilePath, versionFileContent, 'utf8');
+
 console.log(`[SKILL VERSION] Updated version to: ${newVersion}`);
+console.log(`[SKILL VERSION] Updated frontend version file (version.ts) to: v${newVersion}`);

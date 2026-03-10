@@ -1,25 +1,28 @@
 .hall-of-fame-page {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
 }
 
 .tabs-container {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 8px;
+  padding-bottom: 16px;
 }
 
 .tab-btn {
   background: var(--color-graphite);
   color: var(--color-muted);
   border: none;
-  padding: 12px 24px;
+  padding: 10px 16px;
   border-radius: var(--radius-xl);
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex: 1 1 auto;
   white-space: nowrap;
   transition: all var(--transition-fast);
 }
@@ -80,4 +83,15 @@
 
 .font-stats {
   font-family: var(--font-stats);
+}
+
+@media (min-width: 768px) {
+  .tabs-container {
+    flex-wrap: nowrap;
+  }
+  
+  .tab-btn {
+    flex: none;
+    padding: 12px 24px;
+  }
 }

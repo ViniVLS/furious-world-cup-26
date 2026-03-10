@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { VERSION } from '../../../../environments/version';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -57,6 +58,9 @@ import { MatIconModule } from '@angular/material/icon';
           <p class="text-muted text-[10px] uppercase tracking-widest">
             Desenvolvido com <mat-icon class="text-[10px] align-middle text-fury">favorite</mat-icon> no Brasil para o Mundo.
           </p>
+          <p class="text-fury text-[10px] font-bold tracking-widest mt-1">
+            {{ version }}
+          </p>
         </div>
         <div class="flex items-center gap-6">
           <div class="flex items-center gap-2 text-muted text-xs">
@@ -99,4 +103,6 @@ import { MatIconModule } from '@angular/material/icon';
     }
   `]
 })
-export class FooterComponent {}
+export class FooterComponent {
+  version = VERSION;
+}

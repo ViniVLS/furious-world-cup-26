@@ -1,5 +1,6 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { UserProfile } from '../models/user.model';
+import { Router } from '@angular/router';
 
 export type ReputationEvent = 'trade_completed' | 'trade_cancelled' | 'reported' | 'fast_responder';
 
@@ -16,6 +17,8 @@ const COINS_WALLET_CAP = 10_000;
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
+  private router = inject(Router);
+
   readonly currentUser = signal<UserProfile | null>({
     id: 'u1',
     username: 'ColecionadorFuria',
@@ -94,6 +97,12 @@ export class UserService {
       return { ...u, tradeCount: u.tradeCount + 1 };
     });
     this.updateReputation('trade_completed');
+  }
+
+  logout(): void {
+    // Basic mock implementation of a logout
+    this.currentUser.set(null);
+    this.router.navigate(['/']); 
   }
 }
 
