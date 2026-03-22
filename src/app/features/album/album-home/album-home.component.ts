@@ -1,7 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ProgressBarComponent } from '../../../shared/components/progress-bar/progress-bar.component';
 import { NotificationService } from '../../../core/services/notification.service';
+import { AudioService } from '../../../core/services/audio.service';
+import { StickerService } from '../../../core/services/sticker.service';
+import { DebugService } from '../../../../debug/debug.service';
 
 @Component({
   selector: 'app-album-home',
@@ -11,13 +14,20 @@ import { NotificationService } from '../../../core/services/notification.service
   styleUrl: './album-home.component.css'
 })
 export class AlbumHomeComponent implements OnInit {
-  progress2022 = 45;
-  progress2026 = 12;
-
+  private readonly debug = inject(DebugService);
   private notificationService = inject(NotificationService);
+  private audioService = inject(AudioService);
+  private stickerService = inject(StickerService);
+
+  progress2022 = computed(() => this.stickerService.albumProgress().edition2022);
+  progress2026 = computed(() => this.stickerService.albumProgress().edition2026);
 
   ngOnInit() {
-    // SK08 — Proatividade: Solicitar permissão de notificações para engajamento
+    this.debug.logLifecycle('AlbumHomeComponent', 'ngOnInit');
+    this.debug.info('STATE', 'AlbumHomeComponent', 'Album carregado', {
+      progress2022: this.progress2022(), progress2026: this.progress2026()
+    });
+    this.audioService.play('album_enter');
     this.notificationService.requestPermission();
   }
 }

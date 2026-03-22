@@ -4,31 +4,32 @@
     <span>Voltar</span>
   </button>
 
+  @if (sticker()) {
   <div class="detail-content">
     <div class="sticker-container">
-      <app-sticker-card [sticker]="sticker" [isCollected]="true" [showDetails]="true" [class.nft-preview]="nftMode()">
+      <app-sticker-card [sticker]="sticker()!" [isCollected]="isCollected()" [showDetails]="true" [class.nft-preview]="nftMode()">
       </app-sticker-card>
     </div>
 
     <div class="info-container">
-      <h1 class="text-4xl font-bold mb-2">{{ sticker.name }}</h1>
-      <p class="text-xl text-muted mb-6">{{ sticker.code }} • Raridade {{ sticker.rarity }}</p>
+      <h1 class="text-4xl font-bold mb-2">{{ sticker()!.name }}</h1>
+      <p class="text-xl text-muted mb-6">{{ sticker()!.code }} • Raridade {{ sticker()!.rarity }}</p>
 
-      @if (sticker.player) {
+      @if (sticker()!.player) {
       <div class="stats-card mb-6">
-        <h3 class="text-xl font-bold mb-4">Estatísticas ({{ sticker.edition }})</h3>
+        <h3 class="text-xl font-bold mb-4">Estatísticas ({{ sticker()!.edition }})</h3>
         <div class="grid grid-cols-2 gap-4">
           <div class="stat-item">
             <span class="stat-label">Jogos</span>
-            <span class="stat-value">{{ sticker.player.stats2022?.gamesPlayed || 0 }}</span>
+            <span class="stat-value">{{ sticker()!.player?.stats2022?.gamesPlayed || 0 }}</span>
           </div>
           <div class="stat-item">
             <span class="stat-label">Gols</span>
-            <span class="stat-value">{{ sticker.player.stats2022?.goals || 0 }}</span>
+            <span class="stat-value">{{ sticker()!.player?.stats2022?.goals || 0 }}</span>
           </div>
           <div class="stat-item">
             <span class="stat-label">Fase Alcançada</span>
-            <span class="stat-value">{{ sticker.player.stats2022?.furthestRound || '-' }}</span>
+            <span class="stat-value">{{ sticker()!.player?.stats2022?.furthestRound || '-' }}</span>
           </div>
         </div>
       </div>
@@ -63,4 +64,10 @@
       </div>
     </div>
   </div>
+  } @else {
+  <div class="text-center py-12">
+    <p class="text-muted text-xl">Figurinha não encontrada.</p>
+    <button class="btn-primary mt-6" (click)="goBack()">Voltar ao Álbum</button>
+  </div>
+  }
 </div>

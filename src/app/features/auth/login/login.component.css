@@ -158,6 +158,41 @@
   color: #A0AEC0;
 }
 
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper .form-input {
+  flex: 1;
+  padding-right: 48px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #718096;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.password-toggle:hover {
+  color: #FF4500;
+}
+
+.password-toggle mat-icon {
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
+}
+
 /* Responsive */
 @media (max-width: 480px) {
   .login-card {

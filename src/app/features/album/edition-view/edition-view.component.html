@@ -7,7 +7,7 @@
   </div>
 
   <div class="teams-grid">
-    @for (team of teams; track team.code) {
+    @for (team of teams(); track team.code) {
       <a [routerLink]="['/album', edition, team.code]" class="team-card">
         <div class="team-info">
           <span class="text-xl font-bold">{{ team.name }}</span>

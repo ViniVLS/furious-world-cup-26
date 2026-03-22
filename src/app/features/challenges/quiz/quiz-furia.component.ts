@@ -2,18 +2,15 @@ import { Component, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { UserService } from '../../../core/services/user.service';
+import { AudioService } from '../../../core/services/audio.service';
+import { DebugService } from '../../../../debug/debug.service';
 
 export interface QuizQuestion {
-    id: number;
-    question: string;
-    options: string[];
-    correctIndex: number;
+    id: number; question: string; options: string[]; correctIndex: number;
     category: 'historia' | 'jogador' | 'estadio' | 'selecao';
-    difficulty: 'easy' | 'medium' | 'hard';
-    basePoints: number;
+    difficulty: 'easy' | 'medium' | 'hard'; basePoints: number;
 }
 
-// SK04 — Banco de 20 perguntas reais sobre as Copas 2022 e 2026
 const QUIZ_QUESTIONS: QuizQuestion[] = [
     { id: 1, question: 'Quem foi o artilheiro da Copa do Mundo 2022?', options: ['Messi', 'Mbappé', 'Benzema', 'Giroud'], correctIndex: 1, category: 'jogador', difficulty: 'easy', basePoints: 100 },
     { id: 2, question: 'Qual país venceu a Copa do Mundo 2022?', options: ['Brasil', 'França', 'Argentina', 'Marrocos'], correctIndex: 2, category: 'selecao', difficulty: 'easy', basePoints: 100 },
@@ -47,31 +44,25 @@ type QuizPhase = 'idle' | 'active' | 'result' | 'finished';
     styleUrl: './quiz-furia.component.css',
 })
 export class QuizFuriaComponent implements OnDestroy {
+    private readonly debug = inject(DebugService);
     private userService = inject(UserService);
+    private audioService = inject(AudioService);
 
-    // SK04 — Estado do quiz
     phase = signal<QuizPhase>('idle');
     currentQuestionIndex = signal(0);
     questions: QuizQuestion[] = [];
     selectedAnswer = signal<number | null>(null);
     isAnswerRevealed = signal(false);
-
-    // SK04 — Timer 30s com intervalo
     timeLeft = signal(30);
     private timerInterval?: ReturnType<typeof setInterval>;
-
-    // SK04 — Streak x2 (respostas corretas consecutivas)
     streak = signal(0);
     maxStreak = signal(0);
     streakMultiplierActive = signal(false);
-
-    // Pontuação
     totalScore = signal(0);
     correctAnswers = signal(0);
     wrongAnswers = signal(0);
     roundScores: { question: string; points: number; correct: boolean }[] = [];
 
-    // Computed
     currentQuestion = computed(() => this.questions[this.currentQuestionIndex()]);
     isLastQuestion = computed(() => this.currentQuestionIndex() >= this.questions.length - 1);
     timerPct = computed(() => (this.timeLeft() / 30) * 100);
@@ -82,11 +73,16 @@ export class QuizFuriaComponent implements OnDestroy {
         return '#FF4444';
     });
 
+    ngOnDestroy() {
+        this.debug.logLifecycle('QuizFuriaComponent', 'ngOnDestroy');
+        clearInterval(this.timerInterval);
+    }
+
     startQuiz() {
-        // Sortear 10 perguntas aleatórias do banco de 20
+        this.debug.logMethodEntry('QuizFuriaComponent', 'startQuiz');
+        const timer = this.debug.startTimer('startQuiz');
         const shuffled = [...QUIZ_QUESTIONS].sort(() => Math.random() - 0.5);
         this.questions = shuffled.slice(0, 10);
-
         this.currentQuestionIndex.set(0);
         this.totalScore.set(0);
         this.correctAnswers.set(0);
@@ -95,7 +91,10 @@ export class QuizFuriaComponent implements OnDestroy {
         this.maxStreak.set(0);
         this.roundScores = [];
         this.phase.set('active');
+        this.debug.info('METHOD', 'QuizFuriaComponent', `Quiz iniciado com ${this.questions.length} perguntas`, { totalQuestions: this.questions.length });
         this.startTimer();
+        const ms = this.debug.endTimer('startQuiz');
+        this.debug.logMethodExit('QuizFuriaComponent', 'startQuiz', { questions: this.questions.length }, ms);
     }
 
     private startTimer() {
@@ -103,7 +102,6 @@ export class QuizFuriaComponent implements OnDestroy {
         this.selectedAnswer.set(null);
         this.isAnswerRevealed.set(false);
         this.streakMultiplierActive.set(this.streak() >= 2);
-
         clearInterval(this.timerInterval);
         this.timerInterval = setInterval(() => {
             const current = this.timeLeft();
@@ -116,43 +114,54 @@ export class QuizFuriaComponent implements OnDestroy {
     }
 
     private timeExpired() {
+        this.debug.logMethodEntry('QuizFuriaComponent', 'timeExpired', { questionIndex: this.currentQuestionIndex() });
+        const timer = this.debug.startTimer('timeExpired');
         clearInterval(this.timerInterval);
-        // Resposta errada por tempo
         this.streak.set(0);
         this.streakMultiplierActive.set(false);
         this.isAnswerRevealed.set(true);
-        this.selectedAnswer.set(-1); // sinaliza timeout
+        this.selectedAnswer.set(-1);
         this.wrongAnswers.update(n => n + 1);
         const q = this.currentQuestion();
         this.roundScores.push({ question: q.question, points: 0, correct: false });
-
+        this.debug.info('METHOD', 'QuizFuriaComponent', `Tempo expirado na questão ${q.id}: ${q.question}`, { questionId: q.id, correctAnswer: q.correctIndex });
         setTimeout(() => this.advanceQuestion(), 2000);
+        const ms = this.debug.endTimer('timeExpired');
+        this.debug.logMethodExit('QuizFuriaComponent', 'timeExpired', { questionId: q.id }, ms);
     }
 
     selectAnswer(index: number) {
-        if (this.isAnswerRevealed()) return;
+        this.debug.logMethodEntry('QuizFuriaComponent', 'selectAnswer', { index, questionId: this.currentQuestion()?.id });
+        const timer = this.debug.startTimer('selectAnswer');
+        if (this.isAnswerRevealed()) {
+            this.debug.warn('WARN', 'QuizFuriaComponent', 'Resposta já revelada, ignorando');
+            this.debug.logMethodExit('QuizFuriaComponent', 'selectAnswer', { ignored: true });
+            return;
+        }
         clearInterval(this.timerInterval);
 
         const q = this.currentQuestion();
         const isCorrect = index === q.correctIndex;
-        const timeBonus = Math.floor(this.timeLeft() * 3); // até +90 pontos por velocidade
+        const timeBonus = Math.floor(this.timeLeft() * 3);
 
         this.selectedAnswer.set(index);
         this.isAnswerRevealed.set(true);
 
         if (isCorrect) {
+            this.debug.info('METHOD', 'QuizFuriaComponent', `✅ Correta! Questão ${q.id}`, { questionId: q.id, correct: true, timeBonus, selected: index, correctIndex: q.correctIndex });
+            this.audioService.play('quiz_correct');
             const newStreak = this.streak() + 1;
             this.streak.set(newStreak);
             if (newStreak > this.maxStreak()) this.maxStreak.set(newStreak);
-
-            // SK04 — Multiplicador x2 se streak >= 2
             const multiplier = newStreak >= 2 ? 2 : 1;
             const points = (q.basePoints + timeBonus) * multiplier;
-
             this.totalScore.update(s => s + points);
             this.correctAnswers.update(n => n + 1);
             this.roundScores.push({ question: q.question, points, correct: true });
+            this.debug.info('METHOD', 'QuizFuriaComponent', `Pontos ganhos: ${points} (base: ${q.basePoints} + tempo: ${timeBonus}) x${multiplier}`, { points, multiplier, streak: newStreak });
         } else {
+            this.debug.info('METHOD', 'QuizFuriaComponent', `❌ Incorreta. Questão ${q.id}`, { questionId: q.id, correct: false, selected: index, correctIndex: q.correctIndex });
+            this.audioService.play('quiz_wrong');
             this.streak.set(0);
             this.streakMultiplierActive.set(false);
             this.wrongAnswers.update(n => n + 1);
@@ -160,27 +169,40 @@ export class QuizFuriaComponent implements OnDestroy {
         }
 
         setTimeout(() => this.advanceQuestion(), 1800);
+        const ms = this.debug.endTimer('selectAnswer');
+        this.debug.logMethodExit('QuizFuriaComponent', 'selectAnswer', { correct: isCorrect, points: isCorrect ? (this.currentQuestion()?.basePoints || 0) + timeBonus : 0 }, ms);
     }
 
     private advanceQuestion() {
+        this.debug.logMethodEntry('QuizFuriaComponent', 'advanceQuestion', { currentIndex: this.currentQuestionIndex(), total: this.questions.length });
         if (this.isLastQuestion()) {
             this.finishQuiz();
         } else {
             this.currentQuestionIndex.update(i => i + 1);
+            this.debug.info('METHOD', 'QuizFuriaComponent', `Avançando para questão ${this.currentQuestionIndex() + 1}`, { nextIndex: this.currentQuestionIndex() });
             this.startTimer();
         }
+        this.debug.logMethodExit('QuizFuriaComponent', 'advanceQuestion');
     }
 
     private finishQuiz() {
+        this.debug.logMethodEntry('QuizFuriaComponent', 'finishQuiz');
+        const timer = this.debug.startTimer('finishQuiz');
         clearInterval(this.timerInterval);
         this.phase.set('finished');
 
-        // SK04 — Converter pontuação em Fúria Coins (1 coin a cada 10 pontos)
         const coinsEarned = Math.floor(this.totalScore() / 10);
         if (coinsEarned > 0) {
             this.userService.addCoins(coinsEarned);
-            console.log(`[GAMIFICATION LOG] Quiz Fúria concluído. Pontos: ${this.totalScore()}. Coins ganhos: ${coinsEarned}`);
+            this.debug.logAudit('GamificationService', `Quiz Fúria concluído. Pontos: ${this.totalScore()}. Coins ganhos: ${coinsEarned}`, {
+                totalScore: this.totalScore(), correct: this.correctAnswers(), wrong: this.wrongAnswers(),
+                maxStreak: this.maxStreak(), coinsEarned
+            });
+        } else {
+            this.debug.info('AUDIT', 'QuizFuriaComponent', `Quiz Fúria concluído sem coins (pontuação: ${this.totalScore()})`);
         }
+        const ms = this.debug.endTimer('finishQuiz');
+        this.debug.logMethodExit('QuizFuriaComponent', 'finishQuiz', { totalScore: this.totalScore(), correct: this.correctAnswers(), coinsEarned }, ms);
     }
 
     getAnswerClass(index: number): string {
@@ -202,9 +224,5 @@ export class QuizFuriaComponent implements OnDestroy {
 
     get coinsEarned(): number {
         return Math.floor(this.totalScore() / 10);
-    }
-
-    ngOnDestroy() {
-        clearInterval(this.timerInterval);
     }
 }

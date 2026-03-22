@@ -1,0 +1,130 @@
+<div
+  class="debug-panel"
+  [class.minimized]="debug.isMinimized()"
+  [style.left.px]="panelPos().x"
+  [style.top.px]="panelPos().y"
+  (mousemove)="onDragMove($event)"
+  (mouseup)="onDragEnd()"
+  (mouseleave)="onDragEnd()">
+
+  <!-- HEADER -->
+  <div class="panel-header" (mousedown)="onDragStart($event)">
+    <div class="header-left">
+      <span class="panel-title">🐛 FURIOUS DEBUG</span>
+      <span class="entry-count">{{ debug.entries().length }} logs</span>
+    </div>
+    <div class="header-right">
+      @if (debug.newErrorCount() > 0) {
+        <span class="error-badge" (click)="dismissErrors()">
+          {{ debug.newErrorCount() }} error(s)
+        </span>
+      }
+      <button class="icon-btn" (click)="clear()" title="Limpar logs">🗑</button>
+      <button class="icon-btn" (click)="export()" title="Exportar JSON">📥</button>
+      <button class="icon-btn" (click)="debug.toggleMinimize()">
+        {{ debug.isMinimized() ? '▲' : '▼' }}
+      </button>
+    </div>
+  </div>
+
+  @if (!debug.isMinimized()) {
+
+  <!-- CONTROLS BAR -->
+  <div class="controls-bar">
+    <div class="level-filters">
+      @for (level of levels; track level) {
+        <button
+          class="level-btn"
+          [class.active]="isLevelActive(level)"
+          [style.--level-color]="levelColors[level]"
+          (click)="toggleLevel(level)">
+          {{ levelIcons[level] }} {{ level }}
+        </button>
+      }
+    </div>
+    <div class="search-box">
+      <input
+        type="text"
+        placeholder="Buscar..."
+        [value]="debug.searchText()"
+        (input)="setSearch($any($event.target).value)"
+        class="search-input" />
+    </div>
+  </div>
+
+  <!-- CATEGORY STRIP -->
+  <div class="category-strip">
+    @for (cat of categories; track cat) {
+      <button
+        class="cat-btn"
+        [class.active]="isCategoryActive(cat)"
+        (click)="toggleCategory(cat)"
+        [title]="cat">
+        {{ getCategoryLabel(cat) }}
+      </button>
+    }
+  </div>
+
+  <!-- LOG LIST -->
+  <div class="log-list" (click)="onDragEnd()">
+    @if (debug.filteredEntries().length === 0) {
+      <div class="empty-state">
+        <span>Nenhum log corresponde aos filtros atuais</span>
+      </div>
+    } @else {
+      @for (entry of debug.filteredEntries(); track trackByEntry($index, entry)) {
+        <div
+          class="log-entry"
+          [class.expanded]="expandedIds().has(entry.id)"
+          [class.selected]="selectedEntry()?.id === entry.id"
+          [style.border-left-color]="getColor(entry)"
+          (click)="selectEntry(entry)">
+          <div class="log-row">
+            <span class="log-time">{{ formatTime(entry) }}</span>
+            <span class="log-level" [style.color]="getColor(entry)">{{ entry.level }}</span>
+            <span class="log-cat">{{ getIcon(entry) }}</span>
+            <span class="log-service">[{{ entry.service }}]</span>
+            @if (entry.method) {
+              <span class="log-method">{{ entry.method }}</span>
+            }
+            <span class="log-message">{{ entry.message }}</span>
+            @if (entry.durationMs !== undefined) {
+              <span class="log-duration">{{ entry.durationMs }}ms</span>
+            }
+          </div>
+
+          @if (expandedIds().has(entry.id) && (entry.data !== undefined || selectedEntry()?.id === entry.id)) {
+            <div class="log-data">
+              @if (entry.data !== undefined) {
+                <pre>{{ entry.data | json }}</pre>
+              }
+              @if (entry.durationMs !== undefined) {
+                <div class="data-row">Duration: {{ entry.durationMs }}ms</div>
+              }
+              <div class="data-row">ID: {{ entry.id }}</div>
+              <div class="data-row">Category: {{ entry.category }}</div>
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span class="stat">
+      Total: {{ debug.totalCount() }}
+    </span>
+    <span class="stat">
+      Exibidos: {{ debug.filteredEntries().length }}
+    </span>
+    <span class="stat error">
+      Errors: {{ debug.entries().filter(e => e.level === 'ERROR').length }}
+    </span>
+    <span class="stat warn">
+      Warns: {{ debug.entries().filter(e => e.level === 'WARN').length }}
+    </span>
+  </div>
+
+  }
+</div>

@@ -8,8 +8,25 @@
         </a>
       </li>
     }
+    @if (isCreator()) {
+      <li class="nav-item nav-item--admin">
+        <a routerLink="/painel-admin" routerLinkActive="active" class="nav-link nav-link--admin">
+          <mat-icon class="nav-icon">admin_panel_settings</mat-icon>
+          <span class="nav-label">Admin</span>
+        </a>
+      </li>
+    }
   </ul>
-  <div class="nav-version">
+  <div class="nav-version flex flex-col items-center">
+    <div class="flex gap-2 mb-1">
+      <button class="audio-btn transition-all" (click)="toggleMute()" title="Som" [class.muted]="isMuted()">
+        <mat-icon>{{ isMuted() ? 'volume_off' : 'volume_up' }}</mat-icon>
+        <span class="text-[10px] ml-1">{{ isMuted() ? 'MUDO' : 'SOM' }}</span>
+      </button>
+      <button class="btn-test" (click)="testAudio()">
+        <mat-icon style="font-size: 14px; width: 14px; height: 14px;">play_arrow</mat-icon>
+      </button>
+    </div>
     <span class="text-[10px] text-fury font-bold tracking-widest uppercase">{{ version }}</span>
   </div>
 </nav>

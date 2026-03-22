@@ -1,0 +1,328 @@
+<div class="admin-container">
+  <header class="admin-header">
+    <h1>FURIOUS ADMIN PANEL</h1>
+    <div class="header-stats">
+      <span>{{ stats().totalUsers }} usuários</span>
+      <span>{{ stats().activeUsers }} ativos</span>
+      <span>{{ stats().totalCoins | number }} coins totais</span>
+      <span>{{ stats().totalTrades }} trocas</span>
+    </div>
+  </header>
+
+  <nav class="admin-tabs">
+    @for (tab of tabs; track tab.id) {
+      <button class="tab-btn" [class.active]="activeTab() === tab.id" (click)="setTab(tab.id)">
+        <span class="material-icons">{{ tab.icon }}</span>
+        <span>{{ tab.label }}</span>
+      </button>
+    }
+  </nav>
+
+  <main class="admin-content">
+    @switch (activeTab()) {
+      @case ('dashboard') {
+        <section class="dash-grid">
+          <div class="stat-card">
+            <span class="material-icons">people</span>
+            <div>
+              <strong>{{ stats().totalUsers }}</strong>
+              <small>Total Usuários</small>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="material-icons">check_circle</span>
+            <div>
+              <strong>{{ stats().activeUsers }}</strong>
+              <small>Usuários Ativos</small>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="material-icons">account_balance_wallet</span>
+            <div>
+              <strong>{{ stats().totalCoins | number }}</strong>
+              <small>Fúria Coins em Circulação</small>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="material-icons">swap_horiz</span>
+            <div>
+              <strong>{{ stats().totalTrades }}</strong>
+              <small>Total de Trocas</small>
+            </div>
+          </div>
+          <div class="activity-section">
+            <h3>Atividade Recente</h3>
+            @for (entry of activityLog().slice(0, 10); track entry.id) {
+              <div class="activity-item">
+                <span class="activity-time">{{ entry.timestamp | date:'HH:mm' }}</span>
+                <span class="activity-user">{{ entry.adminUsername }}</span>
+                <span class="activity-action">{{ entry.action }}</span>
+              </div>
+            } @empty {
+              <p>Nenhuma atividade registrada.</p>
+            }
+          </div>
+        </section>
+      }
+
+      @case ('users') {
+        <div class="section-header">
+          <h2>Gerenciar Usuários</h2>
+          <input type="text" placeholder="Buscar por nome ou país..." [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)">
+        </div>
+        <div class="users-table">
+          <div class="table-header">
+            <span>Usuário</span><span>Email</span><span>País</span><span>Coins</span><span>Reputação</span><span>Role</span><span>Status</span><span>Ações</span>
+          </div>
+          @for (user of users(); track user.id) {
+            <div class="table-row" [class.inactive]="!user.isActive">
+              <span class="username">{{ user.username }}</span>
+              <span class="user-email">{{ user.email || '—' }}</span>
+              <span>{{ user.country }}</span>
+              <span>{{ user.furyCoins | number }}</span>
+              <span>{{ user.reputation }}</span>
+              <span>
+                <button class="role-badge" [class.admin]="user.role === 'admin'" (click)="toggleRole(user.id)">
+                  {{ user.role === 'admin' ? 'Admin' : 'User' }}
+                </button>
+              </span>
+              <span>
+                <span class="status-dot" [class.active]="user.isActive"></span>
+                {{ user.isActive ? 'Ativo' : 'Bloqueado' }}
+              </span>
+              <span class="actions">
+                <button class="btn-sm" (click)="toggleActive(user.id)">{{ user.isActive ? 'Bloquear' : 'Desbloquear' }}</button>
+                <button class="btn-sm" (click)="resetCoins(user.id)">Reset</button>
+                <button class="btn-sm" (click)="addCoins(user.id)">+Coins</button>
+              </span>
+            </div>
+          }
+        </div>
+      }
+
+      @case ('economy') {
+        <h2>Controle de Economia</h2>
+        <div class="config-grid">
+          <div class="config-card">
+            <h3>Taxas de Conversão de Duplicatas</h3>
+            @for (rarity of [1,2,3,4,5]; track rarity) {
+              <div class="config-row">
+                <label>Raridade {{ rarity }}</label>
+                <input type="number" [value]="$any(config().duplicateRates)[rarity]" (change)="updateDuplicateRate($any(rarity), $any($event.target).value)">
+                <span>coins por {{ rarity }} dup.</span>
+              </div>
+            }
+          </div>
+          <div class="config-card">
+            <h3>Limite de Coins</h3>
+            <div class="config-row">
+              <label>Wallet Cap</label>
+              <input type="number" [value]="config().coinWalletCap" (change)="updateConfig('coinWalletCap', +$any($event.target).value)">
+            </div>
+            <div class="config-row">
+              <label>Trocas por usuário</label>
+              <input type="number" [value]="config().maxOffersPerUser" (change)="updateConfig('maxOffersPerUser', +$any($event.target).value)">
+            </div>
+            <div class="config-row">
+              <label>Pacotes/minuto</label>
+              <input type="number" [value]="config().maxPackOpeningsPerMinute" (change)="updateConfig('maxPackOpeningsPerMinute', +$any($event.target).value)">
+            </div>
+          </div>
+        </div>
+      }
+
+      @case ('packs') {
+        <h2>Custo dos Pacotes</h2>
+        <div class="packs-grid">
+          @for (packType of ['basic', 'plus', 'elite', 'legendary', 'copa']; track packType) {
+            <div class="pack-card">
+              <h3>{{ packType | titlecase }}</h3>
+              <div class="config-row">
+                <label>Preço (coins)</label>
+                <input type="number" [value]="$any(config().packCosts)[packType]" (change)="updatePackCost(packType, $any($event.target).value)">
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      @case ('stickers') {
+        <h2>Gerenciar Figurinhas</h2>
+        <p class="info-text">Gerenciamento de figurinhas via Supabase (em implementação).</p>
+        <div class="info-placeholder">
+          <span class="material-icons">collections</span>
+          <p>Em breve: editor visual de figurinhas, importação/exportação de coleção.</p>
+        </div>
+      }
+
+      @case ('trades') {
+        <h2>Monitoramento de Trocas</h2>
+        <p class="info-text">Sistema de trades integrado ao módulo de Usuários.</p>
+        <div class="info-placeholder">
+          <span class="material-icons">swap_horiz</span>
+          <p>Histórico completo de trocas por usuário disponível no painel de usuários.</p>
+        </div>
+      }
+
+      @case ('missions') {
+        <h2>Missões e Badges</h2>
+        <p class="info-text">Configuração de missões e conquistas (em implementação).</p>
+        <div class="info-placeholder">
+          <span class="material-icons">emoji_events</span>
+          <p>Em breve: editor de missões, badges customizados, recompensas.</p>
+        </div>
+      }
+
+      @case ('plans') {
+        <h2>Planos de Assinatura</h2>
+        <p class="info-text">Planos de assinatura FURIA (em implementação).</p>
+        <div class="info-placeholder">
+          <span class="material-icons">subscriptions</span>
+          <p>Em breve: planos mensais/semanais com bônus de coins e pacotes.</p>
+        </div>
+      }
+
+      @case ('configs') {
+        <h2>Configurações do Sistema</h2>
+        <div class="config-grid">
+          <div class="config-card">
+            <h3>Features</h3>
+            <div class="config-row">
+              <label>Phygital</label>
+              <button class="toggle-btn" [class.on]="config().features.phygital" (click)="toggleFeature('phygital')">
+                {{ config().features.phygital ? 'ON' : 'OFF' }}
+              </button>
+            </div>
+            <div class="config-row">
+              <label>Quiz</label>
+              <button class="toggle-btn" [class.on]="config().features.quiz" (click)="toggleFeature('quiz')">
+                {{ config().features.quiz ? 'ON' : 'OFF' }}
+              </button>
+            </div>
+          </div>
+          <div class="config-card">
+            <h3>Sistema</h3>
+            <div class="config-row">
+              <label>Modo Manutenção</label>
+              <button class="toggle-btn" [class.on]="config().maintenanceMode" (click)="updateConfig('maintenanceMode', !config().maintenanceMode)">
+                {{ config().maintenanceMode ? 'ON' : 'OFF' }}
+              </button>
+            </div>
+            <div class="config-row">
+              <label>Mensagem Banner</label>
+              <input type="text" [ngModel]="config().bannerMessage" (ngModelChange)="updateConfig('bannerMessage', $event)">
+            </div>
+            <div class="config-row">
+              <label>Instagram</label>
+              <input type="text" [ngModel]="config().socialLinks.instagram" (ngModelChange)="updateConfig('socialLinks', {...config().socialLinks, instagram: $event})">
+            </div>
+            <div class="config-row">
+              <label>Twitter</label>
+              <input type="text" [ngModel]="config().socialLinks.twitter" (ngModelChange)="updateConfig('socialLinks', {...config().socialLinks, twitter: $event})">
+            </div>
+            <div class="config-row">
+              <label>Discord</label>
+              <input type="text" [ngModel]="config().socialLinks.discord" (ngModelChange)="updateConfig('socialLinks', {...config().socialLinks, discord: $event})">
+            </div>
+          </div>
+        </div>
+      }
+
+      @case ('debug') {
+        <h2>Debug do Sistema</h2>
+        <p class="info-text">Logs de debug. Use o painel flutuante no canto da tela para visualizar em tempo real.</p>
+        <div class="activity-section">
+          <div class="section-header">
+            <h3>Log de Atividades</h3>
+            <button class="btn-sm" (click)="clearActivityLog()">Limpar Log</button>
+          </div>
+          @for (entry of activityLog(); track entry.id) {
+            <div class="activity-item">
+              <span class="activity-time">{{ entry.timestamp | date:'HH:mm:ss' }}</span>
+              <span class="activity-user">{{ entry.adminUsername }}</span>
+              <span class="activity-action">{{ entry.action }}</span>
+              @if (entry.targetUsername) {
+                <span class="activity-target">→ {{ entry.targetUsername }}</span>
+              }
+            </div>
+          } @empty {
+            <p>Nenhuma atividade.</p>
+          }
+        </div>
+      }
+
+      @case ('audio') {
+        <h2>Gerenciamento de Áudio</h2>
+        <div class="audio-controls">
+          <div class="config-row">
+            <label>Volume Global</label>
+            <input type="range" min="0" max="1" step="0.05" [value]="audioAssets.settings().globalVolume"
+              (input)="setGlobalVolume(+$any($event.target).value)">
+            <span>{{ (audioAssets.settings().globalVolume * 100) | number:'1.0-0' }}%</span>
+          </div>
+          <button class="toggle-btn" [class.on]="!audioAssets.settings().globalMute" (click)="toggleGlobalMute()">
+            {{ audioAssets.settings().globalMute ? 'MUTED' : 'SOUND ON' }}
+          </button>
+        </div>
+
+        <div class="audio-library-header">
+          <h3>Biblioteca de Áudios</h3>
+          <label class="btn-sm btn-upload">
+            <input type="file" accept="audio/*" (change)="onUploadAudio($event)" hidden>
+            + Upload de Áudio
+          </label>
+        </div>
+        <div class="audio-library">
+          @for (audio of audioAssetsList(); track audio.id) {
+            <div class="audio-item">
+              <div class="audio-info">
+                <strong>{{ audio.name }}</strong>
+                <small>{{ audio.fileName }} · {{ audio.duration | number:'1.1-1' }}s · {{ audio.playCount }} plays</small>
+              </div>
+              <div class="audio-actions">
+                <button class="btn-sm" (click)="testAudio(audio.id)">▶ Testar</button>
+                <button class="btn-sm btn-danger" (click)="deleteAudio(audio.id)">🗑</button>
+              </div>
+            </div>
+          } @empty {
+            <p>Nenhum áudio na biblioteca.</p>
+          }
+        </div>
+
+        <h3>Eventos e Mapeamentos</h3>
+        <div class="mappings-grid">
+          @for (mapping of audioMappings(); track mapping.event) {
+            <div class="mapping-card">
+              <div class="mapping-header">
+                <strong>{{ AUDIO_EVENT_LABELS[mapping.event] }}</strong>
+                <button class="toggle-btn sm" [class.on]="mapping.isEnabled" (click)="audioAssets.toggleEventEnabled(mapping.event, !mapping.isEnabled)">
+                  {{ mapping.isEnabled ? 'ON' : 'OFF' }}
+                </button>
+              </div>
+              <div class="mapping-audios">
+                @for (audioId of mapping.assignedAudios; track audioId) {
+                  <span class="audio-tag">
+                    {{ audioAssets.assets().find(a => a.id === audioId)?.name || audioId }}
+                    <button (click)="removeAudio(audioId, mapping.event)">×</button>
+                  </span>
+                } @empty {
+                  <span class="no-audio">Nenhum áudio</span>
+                }
+              </div>
+              <div class="mapping-controls">
+                <select [ngModel]="mapping.playMode" (ngModelChange)="audioAssets.setPlayMode(mapping.event, $event)">
+                  <option value="random">Aleatório</option>
+                  <option value="sequential">Sequencial</option>
+                </select>
+                <button class="btn-sm" (click)="testEventAudio(mapping.event)">▶ Testar</button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+  </main>
+
+  <!-- Debug Bot Overlay -->
+  <app-debug-bot-overlay />
+</div>

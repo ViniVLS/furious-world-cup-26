@@ -1,0 +1,112 @@
+<!-- FLOATING BUTTON to open the panel (visible when panel is closed) -->
+@if (isClosed()) {
+  <button class="debug-bot-fab" (click)="openPanel()" title="Abrir Debug Bot">
+    🤖
+  </button>
+}
+
+<!-- MAIN OVERLAY PANEL (only visible when open) -->
+@if (!isClosed()) {
+<div class="debug-bot-overlay" [class.minimized]="isMinimized()" [class.connected]="isConnected()">
+
+  <!-- HEADER -->
+  <div class="bot-header">
+    <div class="header-left" (click)="toggleMinimize()">
+      <span class="bot-icon">🤖</span>
+      <span class="bot-title">DEBUG BOT</span>
+      <span class="status-dot" [class.online]="isConnected()"></span>
+    </div>
+    <div class="header-right">
+      @if (errorCount() > 0) {
+        <span class="badge error">{{ errorCount() }}</span>
+      }
+      @if (warningCount() > 0) {
+        <span class="badge warn">{{ warningCount() }}</span>
+      }
+      <span class="minimize-icon" (click)="toggleMinimize()">{{ isMinimized() ? '▲' : '▼' }}</span>
+      <button class="btn-close" (click)="closePanel()" title="Fechar Debug Bot">✕</button>
+    </div>
+  </div>
+
+  @if (!isMinimized()) {
+
+  <!-- CONNECTION STATUS -->
+  <div class="connection-bar">
+    <span class="status-text">{{ statusMessage() }}</span>
+    @if (!isConnected()) {
+      <button class="btn-connect" (click)="connect()">Reconectar</button>
+    } @else {
+      <button class="btn-disconnect" (click)="disconnect()">Desconectar</button>
+    }
+  </div>
+
+  <!-- SUGGESTIONS LIST -->
+  <div class="suggestions-panel">
+    @if (suggestions().length === 0) {
+      <div class="empty-state">
+        <span class="empty-icon">✨</span>
+        <p>Nenhuma issue detectada</p>
+        <small>O bot está monitorando seus arquivos em tempo real</small>
+      </div>
+    } @else {
+      <div class="suggestions-list">
+        @for (suggestion of suggestions(); track trackBySuggestion($index, suggestion)) {
+          <div
+            class="suggestion-card"
+            [class.selected]="selectedSuggestion() === suggestion"
+            [class.severity-error]="suggestion.severity === 'error'"
+            [class.severity-warning]="suggestion.severity === 'warning'"
+            (click)="selectSuggestion(suggestion)">
+
+            <div class="suggestion-header">
+              <span class="severity-icon">{{ getSeverityIcon(suggestion.severity) }}</span>
+              <span class="rule-name">{{ suggestion.ruleName }}</span>
+              <span class="file-info">{{ getFileName(suggestion.filePath) }}:{{ suggestion.line }}</span>
+            </div>
+
+            @if (selectedSuggestion() === suggestion) {
+              <div class="suggestion-detail">
+                <div class="code-block">
+                  <label>Código atual:</label>
+                  <pre class="code current">{{ suggestion.currentCode }}</pre>
+                </div>
+                <div class="code-block">
+                  <label>Sugestão:</label>
+                  <pre class="code suggested">{{ suggestion.suggestedFix }}</pre>
+                </div>
+                <p class="explanation">{{ suggestion.explanation }}</p>
+                <div class="action-buttons">
+                  <button class="btn-apply" (click)="applyFix(suggestion); $event.stopPropagation()">
+                    🔧 Aplicar correção
+                  </button>
+                  <button class="btn-ignore" (click)="ignoreFix(suggestion); $event.stopPropagation()">
+                    Ignorar
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- RECENT LOGS -->
+  @if (recentLogs().length > 0) {
+    <div class="logs-section">
+      <h4>Logs recentes</h4>
+      <div class="logs-list">
+        @for (log of recentLogs().slice(0, 5); track trackByLog($index, log)) {
+          <div class="log-item" [class.error]="log.level === 'ERROR'" [class.warn]="log.level === 'WARN'">
+            <span class="log-level">{{ log.level }}</span>
+            <span class="log-service">[{{ log.service }}]</span>
+            <span class="log-message">{{ log.message }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  }
+</div>
+}

@@ -1,11 +1,11 @@
 <div class="profile-page p-6">
   <div class="profile-header mb-8">
     <div class="avatar-container">
-      <div class="avatar">{{ user.username.charAt(0) }}</div>
+      <div class="avatar">{{ currentUser()?.username?.charAt(0) || 'U' }}</div>
     </div>
     <div class="profile-info">
-      <h1 class="text-4xl font-bold">{{ user.username }}</h1>
-      <p class="text-muted">{{ user.country }} • Reputação {{ user.reputation }}</p>
+      <h1 class="text-4xl font-bold">{{ currentUser()?.username || 'Colecionador' }}</h1>
+      <p class="text-muted">{{ currentUser()?.country || 'BR' }} • Reputacao {{ currentUser()?.reputation || 0 | number:'1.1-1' }}</p>
     </div>
     <div class="profile-actions flex gap-4">
       <div class="bg-gray-800 px-4 py-2 rounded-xl border border-gray-700 flex items-center gap-2">
@@ -16,6 +16,9 @@
         <button class="btn-secondary" routerLink="/profile/settings" title="Configurações">
           <mat-icon>settings</mat-icon>
         </button>
+        <button class="btn-secondary transition-all" (click)="toggleMute()" title="Desativar Músicas" [class.text-red-500]="isMuted()">
+          <mat-icon>{{ isMuted() ? 'volume_off' : 'volume_up' }}</mat-icon>
+        </button>
         <button class="btn-secondary !bg-red-900/50 hover:!bg-red-800/80 !text-red-200 border !border-red-900/50" (click)="logout()" title="Sair da Conta">
           <mat-icon>logout</mat-icon>
         </button>
@@ -24,13 +27,16 @@
   </div>
 
   <div class="stats-card mb-8">
-    <app-progress-bar [progress]="user.progress" label="Progresso Total"></app-progress-bar>
+    <app-progress-bar [progress]="totalProgress()" label="Progresso Total"></app-progress-bar>
   </div>
 
   <div class="mb-8">
-    <h2 class="text-2xl font-bold mb-4">Missões Diárias</h2>
+    <h2 class="text-2xl font-bold mb-4">Missoes Diarias</h2>
+    @if (dailyMissions().length === 0) {
+      <p class="text-muted text-sm">Carregando missoes...</p>
+    }
     <div class="grid gap-4">
-      @for (mission of dailyMissions; track mission.id) {
+      @for (mission of dailyMissions(); track mission.id) {
       <div class="bg-gray-800 p-4 rounded-xl flex justify-between items-center border border-gray-700">
         <div>
           <h3 class="font-bold text-lg text-white">{{ mission.title }}</h3>
@@ -40,9 +46,11 @@
           <span class="text-fury font-bold">+{{ mission.rewardCoins }} Coins</span>
           @if (mission.isCompleted) {
           <span class="text-green-500 text-sm font-bold mt-1"><mat-icon
-              class="align-middle text-sm">check_circle</mat-icon> Concluída</span>
+              class="align-middle text-sm">check_circle</mat-icon> Concluida</span>
           } @else {
-          <span class="text-gray-500 text-sm mt-1">Pendente</span>
+          <button class="btn-primary mt-1 px-4 py-1 text-sm" (click)="claimMission(mission)">
+            Fazer
+          </button>
           }
         </div>
       </div>
@@ -52,14 +60,20 @@
 
   <div class="mb-8">
     <h2 class="text-2xl font-bold mb-4">Conquistas (Badges)</h2>
+    @if (badges().length === 0) {
+      <p class="text-muted text-sm mb-4">Nenhuma conquista ainda. Continue colecionando!</p>
+    }
     <div class="flex flex-wrap gap-4">
-      @for (badge of badges; track badge.id) {
+      @for (badge of badges(); track badge.id) {
       <div class="bg-gray-800 p-4 rounded-xl flex flex-col items-center border border-gray-700 w-32 text-center">
         <div class="w-16 h-16 bg-gray-700 rounded-full mb-2 flex items-center justify-center">
           <mat-icon class="text-gold" style="font-size: 32px; width: 32px; height: 32px;">emoji_events</mat-icon>
         </div>
         <h3 class="font-bold text-sm text-white">{{ badge.name }}</h3>
         <p class="text-xs text-gray-400 mt-1">{{ badge.rarity }}</p>
+        @if (badge.unlockedAt) {
+        <p class="text-[10px] text-gray-600 mt-1">{{ badge.unlockedAt | date:'shortDate' }}</p>
+        }
       </div>
       }
     </div>
@@ -74,7 +88,7 @@
     <div class="action-card" (click)="convertDuplicates()" (keydown.enter)="convertDuplicates()" tabindex="0">
       <mat-icon class="text-gold mb-2" style="font-size: 32px; width: 32px; height: 32px;">recycling</mat-icon>
       <h3 class="font-bold">Converter Repetidas</h3>
-      <p class="text-sm text-muted">Troque repetidas por Coins</p>
+      <p class="text-sm text-muted">{{ totalDuplicates() }} figurinha(s) repetida(s)</p>
     </div>
   </div>
 </div>

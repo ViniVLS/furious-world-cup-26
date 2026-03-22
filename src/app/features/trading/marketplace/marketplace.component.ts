@@ -1,10 +1,12 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { TradeService } from '../../../core/services/trade.service';
 import { TradeOffer } from '../../../core/models/trade.model';
-import { UserProfile } from '../../../core/models/user.model';
+import { UserService } from '../../../core/services/user.service';
+import { StickerService } from '../../../core/services/sticker.service';
+import { DebugService } from '../../../../debug/debug.service';
 
 @Component({
   selector: 'app-marketplace',
@@ -13,28 +15,49 @@ import { UserProfile } from '../../../core/models/user.model';
   templateUrl: './marketplace.component.html',
   styleUrl: './marketplace.component.css'
 })
-export class MarketplaceComponent implements OnInit {
-  offers: TradeOffer[] = [];
-  
+export class MarketplaceComponent implements OnInit, OnDestroy {
+  private readonly debug = inject(DebugService);
   private tradeService = inject(TradeService);
+  private userService = inject(UserService);
+  private stickerService = inject(StickerService);
+
+  currentUser = this.userService.currentUser;
+  userDuplicates = computed(() => this.tradeService.getUserDuplicates());
+  offers = computed(() => this.tradeService.activeOffers());
 
   ngOnInit() {
-    const mockUser: UserProfile = {
-      id: 'u1', username: 'Me', country: 'BRA', isMinor: false,
-      furyCoins: 0, coinsVault: 0, reputation: 5.0, tradeCount: 0,
-      loginStreak: 0, badges: [], privacyLevel: 'public',
-      hofCollector: 0, hofLegendary: 0, hofChallenges: 0, hofTrades: 0,
-      createdAt: new Date().toISOString()
-    };
-    const userDuplicates = ['2022-BRA-10']; // I have what TraderPro wants
-
-    this.tradeService.getMarketplaceOffers(mockUser, userDuplicates).subscribe(o => {
-      this.offers = o;
+    this.debug.logLifecycle('MarketplaceComponent', 'ngOnInit');
+    this.debug.info('STATE', 'MarketplaceComponent', 'Marketplace carregado', {
+      userId: this.currentUser()?.id,
+      totalOffers: this.offers().length
     });
   }
 
   isMatch(offer: TradeOffer): boolean {
-    const userDuplicates = ['2022-BRA-10']; // Mock
-    return offer.wantingAny.some(code => userDuplicates.includes(code));
+    const dupes = this.userDuplicates();
+    const match = offer.wantingAny.some(code => dupes.includes(code));
+    this.debug.debug('METHOD', 'MarketplaceComponent', `isMatch para oferta ${offer.id}: ${match}`, { offerId: offer.id, userDuplicates: dupes, wantingAny: offer.wantingAny, match });
+    return match;
+  }
+
+  acceptOffer(offerId: string): void {
+    this.debug.logMethodEntry('MarketplaceComponent', 'acceptOffer', { offerId });
+    const timer = this.debug.startTimer('acceptOffer');
+    this.tradeService.acceptOffer(offerId).subscribe({
+      next: () => {
+        this.debug.info('AUDIT', 'MarketplaceComponent', `Oferta aceita! ID: ${offerId}`);
+        const ms = this.debug.endTimer('acceptOffer');
+        this.debug.logMethodExit('MarketplaceComponent', 'acceptOffer', { success: true }, ms);
+      },
+      error: (err) => {
+        this.debug.error('ERROR', 'MarketplaceComponent', `Erro ao aceitar oferta: ${err.message}`, err, 'acceptOffer');
+        const ms = this.debug.endTimer('acceptOffer');
+        this.debug.logMethodExit('MarketplaceComponent', 'acceptOffer', { success: false, error: err.message }, ms);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.debug.logLifecycle('MarketplaceComponent', 'ngOnDestroy');
   }
 }

@@ -1,0 +1,9 @@
+[
+  {
+    "originalPath": "C:\\Users\\ViniciusL\\Documents\\Antigravity\\furious-world-cup-26\\src\\debug\\debug.service.ts",
+    "backupPath": "C:\\Users\\ViniciusL\\Documents\\Antigravity\\furious-world-cup-26\\debug-bot\\backups\\2026-03-22T06-25-16-367Z__src__debug__debug.service.ts",
+    "timestamp": "2026-03-22T06:25:16.372Z",
+    "ruleId": "unused-import",
+    "description": "O import 'formatTimestamp' não é utilizado neste arquivo. Remova-o para manter o código limpo."
+  }
+]

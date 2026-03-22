@@ -1,8 +1,9 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { GamificationService } from '../../../core/services/gamification.service';
+import { DebugService } from '../../../../debug/debug.service';
 
 @Component({
   selector: 'app-challenge-list',
@@ -12,7 +13,6 @@ import { GamificationService } from '../../../core/services/gamification.service
     <div class="challenges-page p-6">
       <h1 class="text-4xl font-bold mb-2">Desafios</h1>
       <p class="text-muted text-sm mb-8">Participe, acumule pontos e ganhe Fúria Coins 🏆</p>
-
       <div class="grid gap-6">
         @for (challenge of challenges(); track challenge.id) {
           <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 hover:border-fury transition-colors">
@@ -23,9 +23,7 @@ import { GamificationService } from '../../../core/services/gamification.service
                     {{ challenge.type === 'weekly' ? 'Semanal' : challenge.type === 'quiz' ? '⚡ Quiz Fúria' : 'Temático' }}
                   </span>
                   @if (challenge.isActive) {
-                    <span class="px-2 py-1 bg-green-900/50 text-green-400 rounded text-xs font-bold uppercase">
-                      Ativo
-                    </span>
+                    <span class="px-2 py-1 bg-green-900/50 text-green-400 rounded text-xs font-bold uppercase">Ativo</span>
                   }
                 </div>
                 <h2 class="text-2xl font-bold text-white">{{ challenge.title }}</h2>
@@ -43,13 +41,11 @@ import { GamificationService } from '../../../core/services/gamification.service
                 </div>
               </div>
             </div>
-
             <div class="flex justify-between items-center mt-6 pt-4 border-t border-gray-700">
               <div class="text-sm text-gray-400 flex items-center gap-1">
                 <mat-icon class="text-sm">schedule</mat-icon>
                 Termina em: {{ challenge.endsAt | date:'shortDate' }}
               </div>
-              <!-- SK04 — Botão PARTICIPAR navega para o quiz real -->
               <button
                 class="px-6 py-2 font-bold rounded transition-colors"
                 [ngClass]="challenge.type === 'quiz' ? 'bg-fury hover:bg-red-600 text-white' : 'bg-gray-700 hover:bg-gray-600 text-gray-300'"
@@ -62,28 +58,35 @@ import { GamificationService } from '../../../core/services/gamification.service
       </div>
     </div>
   `,
-  styles: [`
-    .challenges-page { max-width: 800px; margin: 0 auto; }
-    .text-gold { color: #FFD700; }
-  `]
+  styles: [`.challenges-page { max-width: 800px; margin: 0 auto; } .text-gold { color: #FFD700; }`]
 })
-export class ChallengeListComponent implements OnInit {
+export class ChallengeListComponent implements OnInit, OnDestroy {
   challenges = inject(GamificationService).activeChallenges;
   private gamificationService = inject(GamificationService);
   private router = inject(Router);
+  private readonly debug = inject(DebugService);
 
   ngOnInit() {
+    this.debug.logLifecycle('ChallengeListComponent', 'ngOnInit');
     this.gamificationService.getActiveChallenges().subscribe();
+    this.debug.info('STATE', 'ChallengeListComponent', 'Lista de desafios carregada', { count: this.challenges().length });
+  }
+
+  ngOnDestroy() {
+    this.debug.logLifecycle('ChallengeListComponent', 'ngOnDestroy');
   }
 
   participate(type: string) {
+    this.debug.logMethodEntry('ChallengeListComponent', 'participate', { type });
+    const timer = this.debug.startTimer('participate');
     if (type === 'quiz') {
+      this.debug.info('METHOD', 'ChallengeListComponent', 'Iniciando Quiz Fúria');
       this.router.navigate(['/challenges/quiz']);
+      this.debug.logNavigation('/challenges', '/challenges/quiz');
     } else {
-      // Outros tipos serão implementados em etapas futuras
-      alert('Desafio em breve disponível! Fique de olho nas atualizações. 🔥');
+      this.debug.warn('WARN', 'ChallengeListComponent', `Desafio ${type} ainda não implementado`);
     }
+    const ms = this.debug.endTimer('participate');
+    this.debug.logMethodExit('ChallengeListComponent', 'participate', { type }, ms);
   }
 }
-
-

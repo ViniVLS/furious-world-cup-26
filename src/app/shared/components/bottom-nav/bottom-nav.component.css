@@ -59,42 +59,80 @@
     bottom: auto;
     border-top: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex; /* NEW: make the nav a flex container */
-    align-items: center; /* NEW: center items vertically */
-    justify-content: flex-end; /* NEW: align to the right */
-    padding: 0 24px; /* adjusted padding */
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Adjusted to separate list from version */
+    padding: 0 40px;
+    height: 70px;
   }
   
   .nav-list {
     margin: 0;
-    justify-content: flex-end;
+    justify-content: flex-start;
     gap: 32px;
-    padding: 16px 0; /* adjusted padding */
+    padding: 0;
+    flex: 1;
   }
   
-  .nav-item {
-    flex: none;
-  }
-  
-  .nav-link {
+  .nav-version {
+    display: flex !important; /* Ensure visibility */
     flex-direction: row;
-    gap: 8px;
-  }
-  
-  .nav-label {
-    font-size: 1rem;
+    align-items: center;
+    gap: 16px;
+    padding-left: 20px;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 0;
   }
 
-  .nav-version {
-    display: flex;
-    align-items: center;
-    padding-left: 16px;
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
-    margin-left: 16px;
+  .nav-version button {
+    margin-bottom: 0 !important;
   }
 }
 
-/* Base styles for version on mobile (hidden or unobtrusive) */
 .nav-version {
-  display: none; /* Can be hidden on mobile or styled differently if preferred */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
+.nav-version .audio-btn {
+  background: var(--color-fury);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.nav-version .audio-btn.muted {
+  background: #666;
+  opacity: 0.7;
+}
+
+.nav-version .btn-test {
+  background: var(--color-gold);
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.nav-item--admin .nav-link--admin {
+  color: var(--color-fury);
+}
+
+.nav-item--admin .nav-icon {
+  color: var(--color-fury);
+}
+
+.nav-item--admin.router-link-active .nav-link,
+.nav-item--admin .nav-link--admin:hover {
+  color: var(--color-fury);
 }

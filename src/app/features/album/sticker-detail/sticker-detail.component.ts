@@ -1,9 +1,11 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule, Location } from '@angular/common';
 import { StickerCardComponent } from '../../../shared/components/sticker-card/sticker-card.component';
 import { Sticker } from '../../../core/models/sticker.model';
 import { MatIconModule } from '@angular/material/icon';
+import { StickerService } from '../../../core/services/sticker.service';
+import { DebugService } from '../../../../debug/debug.service';
 
 @Component({
   selector: 'app-sticker-detail',
@@ -12,31 +14,42 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './sticker-detail.component.html',
   styleUrl: './sticker-detail.component.css'
 })
-export class StickerDetailComponent implements OnInit {
-  stickerId = '';
-  nftMode = signal(false);
-
-  sticker: Sticker = {
-    id: '3', code: '2022-BRA-10', type: 'player', edition: '2022', country: 'BRA', rarity: 5,
-    imageUrl: 'https://picsum.photos/seed/bra10/240/336', name: 'Neymar Jr',
-    player: {
-      id: 'p1', fullName: 'Neymar da Silva Santos Júnior', displayName: 'Neymar Jr',
-      country: 'BRA', position: 'FWD', worldCups: ['2022'], rarity: 5,
-      imageUrl: '', verified: true, createdAt: '', source: 'FIFA.com', lastUpdated: new Date().toISOString(),
-      stats2022: { gamesPlayed: 3, goals: 2, assists: 1, yellowCards: 0, redCards: 0, furthestRound: 'QF' }
-    }
-  };
-
+export class StickerDetailComponent implements OnInit, OnDestroy {
+  private readonly debug = inject(DebugService);
   private route = inject(ActivatedRoute);
   private location = inject(Location);
+  private stickerService = inject(StickerService);
+
+  stickerId = signal('');
+  nftMode = signal(false);
+
+  sticker = computed<Sticker | null>(() => {
+    const id = this.stickerId();
+    if (!id) return null;
+    return this.stickerService.getStickerById(id);
+  });
+
+  isCollected = computed(() => {
+    const id = this.stickerId();
+    const collection = this.stickerService.userCollection();
+    return collection.some(us => us.stickerId === id);
+  });
 
   ngOnInit() {
+    this.debug.logLifecycle('StickerDetailComponent', 'ngOnInit');
     this.route.paramMap.subscribe(params => {
-      this.stickerId = params.get('stickerId') || '';
+      this.stickerId.set(params.get('stickerId') || '');
+      this.debug.info('STATE', 'StickerDetailComponent', `Sticker ID resolved: ${this.stickerId()}`, { stickerId: this.stickerId() });
     });
   }
 
   goBack() {
+    this.debug.logMethodEntry('StickerDetailComponent', 'goBack');
     this.location.back();
+    this.debug.logMethodExit('StickerDetailComponent', 'goBack');
+  }
+
+  ngOnDestroy() {
+    this.debug.logLifecycle('StickerDetailComponent', 'ngOnDestroy');
   }
 }

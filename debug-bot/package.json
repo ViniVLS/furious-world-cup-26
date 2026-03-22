@@ -1,0 +1,17 @@
+{
+  "name": "furious-debug-bot",
+  "version": "1.0.0",
+  "description": "Automated log analyzer & fixer daemon for Furious World Cup 26",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "chokidar": "^4.0.3",
+    "ts-morph": "^25.0.0",
+    "ws": "^8.18.0"
+  }
+}

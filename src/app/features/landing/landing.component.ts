@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
+import { DebugService } from '../../../debug/debug.service';
+import { inject } from '@angular/core';
 
 @Component({
   selector: 'app-landing',
@@ -11,4 +13,10 @@ import { FooterComponent } from '../../shared/components/footer/footer.component
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 })
-export class LandingComponent {}
+export class LandingComponent {
+  private readonly debug = inject(DebugService);
+
+  constructor() {
+    this.debug.logLifecycle('LandingComponent', 'constructor');
+  }
+}

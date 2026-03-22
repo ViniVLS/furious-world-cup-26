@@ -6,12 +6,7 @@ import { Sticker } from '../../../core/models/sticker.model';
 import { MatIconModule } from '@angular/material/icon';
 import { AlbumProgressService, AlbumPagePhase } from '../../../core/services/album-progress.service';
 import { StickerService } from '../../../core/services/sticker.service';
-
-// Total de figurinhas por seleção por edição (SK02 — dados mock por enquanto)
-const TOTAL_STICKERS_PER_TEAM: Record<string, number> = {
-  '2022': 9,
-  '2026': 12,
-};
+import { DebugService } from '../../../../debug/debug.service';
 
 @Component({
   selector: 'app-team-view',
@@ -21,55 +16,53 @@ const TOTAL_STICKERS_PER_TEAM: Record<string, number> = {
   styleUrl: './team-view.component.css'
 })
 export class TeamViewComponent implements OnInit, OnDestroy {
-  edition = '';
-  countryCode = '';
+  private readonly debug = inject(DebugService);
+  edition = signal('');
+  countryCode = signal('');
 
   private route = inject(ActivatedRoute);
   private albumProgress = inject(AlbumProgressService);
   private stickerService = inject(StickerService);
 
-  // SK07 — Estado de confete e overlay de conclusão
   showConfetti = signal(false);
   showCompletionOverlay = signal(false);
   private confettiTimeout?: ReturnType<typeof setTimeout>;
+  private previousPhase = signal<AlbumPagePhase>('empty');
 
-  stickers: { sticker: Sticker; collected: boolean }[] = [
-    {
-      sticker: { id: '1', code: '2022-BRA-01', type: 'shield', edition: '2022', country: 'BRA', rarity: 2, imageUrl: 'https://picsum.photos/seed/brashield/120/168', name: 'Escudo Brasil' },
-      collected: true
-    },
-    {
-      sticker: { id: '2', code: '2022-BRA-02', type: 'player', edition: '2022', country: 'BRA', rarity: 1, imageUrl: 'https://picsum.photos/seed/bra2/120/168', name: 'Alisson' },
-      collected: false
-    },
-    {
-      sticker: { id: '3', code: '2022-BRA-10', type: 'player', edition: '2022', country: 'BRA', rarity: 5, imageUrl: 'https://picsum.photos/seed/bra10/120/168', name: 'Neymar Jr' },
-      collected: true
-    }
-  ];
-
-  /** Progressão calculada para esta seleção/edição */
-  progress = computed(() => {
-    const total = TOTAL_STICKERS_PER_TEAM[this.edition] ?? 10;
-    return this.albumProgress.getTeamProgress(this.countryCode, this.edition, total);
+  stickers = computed<{ sticker: Sticker; collected: boolean }[]>(() => {
+    const edition = this.edition();
+    const country = this.countryCode();
+    if (!edition || !country) return [];
+    const collection = this.stickerService.userCollection();
+    return collection
+      .filter(us => us.sticker.country === country && us.sticker.edition === edition)
+      .map(us => ({ sticker: us.sticker, collected: us.inAlbum === 1 }))
+      .sort((a, b) => a.sticker.rarity - b.sticker.rarity);
   });
 
-  /** Fase visual computada */
-  phase = computed<AlbumPagePhase>(() => this.progress().phase);
+  totalStickers = computed(() => this.stickers().length);
 
-  /** % de progresso (0–100) */
+  progress = computed(() => {
+    const total = this.totalStickers();
+    const country = this.countryCode();
+    const edition = this.edition();
+    if (!country || !edition || total === 0) {
+      return { countryCode: country, edition, collected: 0, total: 0, pct: 0, phase: 'empty' as AlbumPagePhase, isNewlyCompleted: false };
+    }
+    return this.albumProgress.getTeamProgress(country, edition, total);
+  });
+
+  phase = computed<AlbumPagePhase>(() => this.progress().phase);
   progressPct = computed(() => this.progress().pct);
 
-  /** Label de status para a barra de progresso */
   progressLabel = computed(() => {
     const p = this.progress();
-    if (p.phase === 'complete') return '✅ COMPLETO!';
+    if (p.phase === 'complete') return 'COMPLETO!';
     if (p.phase === 'most') return `Quase lá! ${p.collected}/${p.total}`;
     if (p.phase === 'partial') return `${p.collected}/${p.total} figurinhas`;
     return 'Comece a colecionar!';
   });
 
-  /** Retorna a classe CSS de fase para cada card de figurinha */
   getStickerPhaseClass(collected: boolean): string {
     if (!collected) return 'sticker-phase--missing';
     switch (this.phase()) {
@@ -81,38 +74,45 @@ export class TeamViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.debug.logLifecycle('TeamViewComponent', 'ngOnInit');
     this.route.paramMap.subscribe(params => {
-      this.edition = params.get('edition') || '';
-      this.countryCode = params.get('countryCode') || '';
-      this.checkCompletion();
+      this.edition.set(params.get('edition') || '');
+      this.countryCode.set(params.get('countryCode') || '');
+      this.debug.info('STATE', 'TeamViewComponent', `Parâmetros resolved: edition=${this.edition()}, country=${this.countryCode()}`, { edition: this.edition(), countryCode: this.countryCode() });
     });
   }
 
   private checkCompletion() {
     const prog = this.progress();
-    if (prog.isNewlyCompleted) {
+    const prev = this.previousPhase();
+    if (prog.phase === 'complete' && prev !== 'complete') {
+      this.previousPhase.set('complete');
+      this.debug.info('AUDIT', 'TeamViewComponent', `Seleção ${this.countryCode()} (${this.edition()}) COMPLETA!`);
       this.triggerCompletion();
+    } else if (prog.phase !== 'complete') {
+      this.previousPhase.set(prog.phase);
     }
   }
 
-  /** SK07 — Dispara animação de confete e overlay ao completar 100% */
   triggerCompletion() {
+    this.debug.logMethodEntry('TeamViewComponent', 'triggerCompletion');
     this.showConfetti.set(true);
     this.showCompletionOverlay.set(true);
-
     this.confettiTimeout = setTimeout(() => {
       this.showConfetti.set(false);
-    }, 5000); // confete dura 5s
+    }, 5000);
+    this.debug.logMethodExit('TeamViewComponent', 'triggerCompletion');
   }
 
   dismissOverlay() {
+    this.debug.logMethodEntry('TeamViewComponent', 'dismissOverlay');
     this.showCompletionOverlay.set(false);
     this.albumProgress.dismissCompletion();
+    this.debug.logMethodExit('TeamViewComponent', 'dismissOverlay');
   }
 
   ngOnDestroy() {
+    this.debug.logLifecycle('TeamViewComponent', 'ngOnDestroy');
     if (this.confettiTimeout) clearTimeout(this.confettiTimeout);
   }
 }
-
-

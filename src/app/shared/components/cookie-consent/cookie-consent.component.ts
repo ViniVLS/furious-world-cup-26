@@ -2,6 +2,7 @@ import { Component, OnInit, signal, inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { DebugService } from '../../../../debug/debug.service';
 
 @Component({
   selector: 'app-cookie-consent',
@@ -35,7 +36,6 @@ import { MatIconModule } from '@angular/material/icon';
       </div>
     }
 
-    <!-- Modal de Preferências -->
     @if (showPreferences()) {
       <div class="pref-overlay fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] flex items-end md:items-center justify-center p-4">
         <div class="pref-modal w-full max-w-md bg-gray-900 border border-gray-800 rounded-3xl p-8 flex flex-col gap-6">
@@ -47,7 +47,6 @@ import { MatIconModule } from '@angular/material/icon';
           </div>
 
           <div class="flex flex-col gap-4">
-            <!-- Essencial -->
             <div class="cookie-opt p-4 rounded-2xl bg-gray-800/50 border border-gray-700">
               <div class="flex justify-between items-center mb-1">
                 <span class="text-sm font-bold text-white">Essenciais</span>
@@ -56,7 +55,6 @@ import { MatIconModule } from '@angular/material/icon';
               <p class="text-[10px] text-muted">Necessários para o álbum funcionar (login, segurança, compras).</p>
             </div>
 
-            <!-- Analytics -->
             <div class="cookie-opt p-4 rounded-2xl border border-gray-700 transition-colors" [class.border-fury]="analytics()">
               <div class="flex justify-between items-center mb-1">
                 <span class="text-sm font-bold text-white">Analíticos</span>
@@ -67,7 +65,6 @@ import { MatIconModule } from '@angular/material/icon';
               <p class="text-[10px] text-muted">Nos ajudam a entender como você coleciona para melhorarmos o app.</p>
             </div>
 
-            <!-- Marketing -->
             <div class="cookie-opt p-4 rounded-2xl border border-gray-700 transition-colors" [class.border-fury]="marketing()">
               <div class="flex justify-between items-center mb-1">
                 <span class="text-sm font-bold text-white">Marketing & Promoções</span>
@@ -87,9 +84,7 @@ import { MatIconModule } from '@angular/material/icon';
     }
   `,
   styles: [`
-    .cookie-banner, .pref-modal {
-      animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    }
+    .cookie-banner, .pref-modal { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
     @keyframes slideUp {
       from { transform: translateY(100%) scale(0.95); opacity: 0; }
       to { transform: translateY(0) scale(1); opacity: 1; }
@@ -103,61 +98,74 @@ import { MatIconModule } from '@angular/material/icon';
   `]
 })
 export class CookieConsentComponent implements OnInit {
+  private readonly debug = inject(DebugService);
   showBanner = signal(false);
   showPreferences = signal(false);
-
-  // Categorias de Cookies
-  essential = true; // Sempre true
+  essential = true;
   analytics = signal(true);
   marketing = signal(false);
-
   private platformId = inject(PLATFORM_ID);
 
   ngOnInit() {
+    this.debug.logLifecycle('CookieConsentComponent', 'ngOnInit');
     if (isPlatformBrowser(this.platformId)) {
       const consent = localStorage.getItem('cookie-furious-consent');
       if (!consent) {
+        this.debug.info('STATE', 'CookieConsentComponent', 'Nenhum consentimento encontrado, mostrando banner');
         setTimeout(() => this.showBanner.set(true), 2000);
       } else {
         const parsed = JSON.parse(consent);
         this.analytics.set(parsed.analytics);
         this.marketing.set(parsed.marketing);
+        this.debug.info('STATE', 'CookieConsentComponent', 'Consentimento carregado do localStorage', { analytics: parsed.analytics, marketing: parsed.marketing });
       }
     }
   }
 
   togglePreferences() {
+    this.debug.logMethodEntry('CookieConsentComponent', 'togglePreferences');
     this.showPreferences.set(!this.showPreferences());
     if (this.showPreferences()) this.showBanner.set(false);
+    this.debug.logMethodExit('CookieConsentComponent', 'togglePreferences');
   }
 
   acceptAll() {
+    this.debug.logMethodEntry('CookieConsentComponent', 'acceptAll');
+    const timer = this.debug.startTimer('acceptAll');
     this.saveConsent(true, true);
     this.showBanner.set(false);
     this.showPreferences.set(false);
+    const ms = this.debug.endTimer('acceptAll');
+    this.debug.logMethodExit('CookieConsentComponent', 'acceptAll', null, ms);
   }
 
   savePreferences() {
+    this.debug.logMethodEntry('CookieConsentComponent', 'savePreferences');
+    const timer = this.debug.startTimer('savePreferences');
+    this.debug.info('STATE', 'CookieConsentComponent', `Salvando preferências: analytics=${this.analytics()}, marketing=${this.marketing()}`);
     this.saveConsent(this.analytics(), this.marketing());
     this.showPreferences.set(false);
     this.showBanner.set(false);
+    const ms = this.debug.endTimer('savePreferences');
+    this.debug.logMethodExit('CookieConsentComponent', 'savePreferences', null, ms);
   }
 
   private saveConsent(analytics: boolean, marketing: boolean) {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem('cookie-furious-consent', JSON.stringify({
-        essential: true,
-        analytics,
-        marketing,
-        timestamp: new Date().toISOString()
+        essential: true, analytics, marketing, timestamp: new Date().toISOString()
       }));
-      console.log(`[LGPD LOG] Consent saved: A:${analytics}, M:${marketing}`);
+      this.debug.logAudit('CookieConsentComponent', `Consent saved: A:${analytics}, M:${marketing}`);
     }
   }
 
   declineAll() {
+    this.debug.logMethodEntry('CookieConsentComponent', 'declineAll');
+    const timer = this.debug.startTimer('declineAll');
     this.saveConsent(false, false);
     this.showBanner.set(false);
     this.showPreferences.set(false);
+    const ms = this.debug.endTimer('declineAll');
+    this.debug.logMethodExit('CookieConsentComponent', 'declineAll', null, ms);
   }
 }

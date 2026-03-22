@@ -1,5 +1,6 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DebugService } from '../../../../../debug/debug.service';
 
 @Component({
   selector: 'app-step-team',
@@ -8,7 +9,8 @@ import { CommonModule } from '@angular/common';
   templateUrl: './step-team.component.html',
   styleUrl: './step-team.component.css'
 })
-export class StepTeamComponent {
+export class StepTeamComponent implements OnInit {
+  private readonly debug = inject(DebugService);
   @Output() next = new EventEmitter<void>();
   selectedTeam: string | null = null;
 
@@ -19,7 +21,16 @@ export class StepTeamComponent {
     { code: 'ENG', name: 'Inglaterra' }
   ];
 
+  ngOnInit() {
+    this.debug.logLifecycle('StepTeamComponent', 'ngOnInit');
+  }
+
   selectTeam(code: string) {
+    this.debug.logMethodEntry('StepTeamComponent', 'selectTeam', { code, previousSelection: this.selectedTeam });
+    const timer = this.debug.startTimer('selectTeam');
     this.selectedTeam = code;
+    this.debug.info('AUDIT', 'StepTeamComponent', `Seleção favorita escolhida: ${code}`, { teamCode: code, teamName: this.teams.find(t => t.code === code)?.name });
+    const ms = this.debug.endTimer('selectTeam');
+    this.debug.logMethodExit('StepTeamComponent', 'selectTeam', { selected: code }, ms);
   }
 }

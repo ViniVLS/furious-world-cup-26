@@ -1,6 +1,9 @@
+export type UserRole = 'user' | 'admin';
+
 export interface UserProfile {
   id:            string;
   username:      string;
+  email?:        string;
   country?:      string;
   favoriteTeam?: string;
   birthDate?:    string;
@@ -13,6 +16,8 @@ export interface UserProfile {
   lastLogin?:    string;
   badges:        string[];
   privacyLevel:  'public' | 'friends' | 'private';
+  role: UserRole;
+  isActive: boolean;
   hofCollector:  number;
   hofLegendary:  number;
   hofChallenges: number;

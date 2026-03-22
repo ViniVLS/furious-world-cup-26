@@ -1,4 +1,127 @@
-<div class="trade-offer-page p-6">
-  <h1 class="text-4xl font-bold mb-8">Criar Oferta</h1>
-  <p class="text-muted">Selecione as figurinhas que deseja oferecer e as que procura.</p>
+<div class="trade-offer-page p-4">
+  <h1 class="text-3xl font-bold mb-6">Criar Oferta de Troca</h1>
+
+  @if (userCollection().length === 0) {
+    <div class="empty-state text-center py-12">
+      <mat-icon class="text-6xl text-gray-600 mb-4">collections</mat-icon>
+      <p class="text-muted text-xl">Voce ainda nao tem figurinhas.</p>
+      <p class="text-muted text-sm mt-2">Abra pacotes para comecar a colecionar!</p>
+    </div>
+  } @else {
+
+  <!-- Seção: OFERECENDO -->
+  <div class="section mb-8">
+    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+      <mat-icon class="text-fury">offer</mat-icon>
+      Figurinhas que voce oferece
+      <span class="text-sm font-normal text-gray-400">({{ offeredStickers().length }} selecionada(s))</span>
+    </h2>
+
+    @if (offeredStickers().length > 0) {
+      <div class="selected-stickers mb-4 p-4 bg-gray-900 rounded-xl border border-fury/30">
+        <div class="flex flex-wrap gap-2">
+          @for (item of offeredStickers(); track item.stickerId) {
+            <div class="selected-sticker flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-mono"
+              [style.border-color]="RARITY_COLORS[item.sticker.rarity]"
+              [style.background]="RARITY_COLORS[item.sticker.rarity] + '20'">
+              <span [style.color]="RARITY_COLORS[item.sticker.rarity]" class="font-bold">{{ item.sticker.code }}</span>
+              <button class="remove-btn text-gray-400 hover:text-fury" (click)="removeOffer(item.stickerId)">
+                <mat-icon class="text-base">close</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    @for (group of availableByRarity(); track group.rarity) {
+      <div class="rarity-group mb-4">
+        <div class="flex items-center gap-2 mb-2">
+          <div class="w-3 h-3 rounded-full" [style.background]="group.color"></div>
+          <span class="font-bold text-sm uppercase" [style.color]="group.color">{{ group.label }}</span>
+        </div>
+        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+          @for (item of group.items; track item.stickerId) {
+            <button
+              class="sticker-btn p-2 rounded-xl text-center transition-all hover:scale-105"
+              [style.border-color]="group.color"
+              [style.background]="group.color + '15'"
+              (click)="toggleOffer(item)">
+              <mat-icon class="text-3xl mb-1" [style.color]="group.color">sports_soccer</mat-icon>
+              <div class="text-xs font-mono font-bold truncate" [style.color]="group.color">{{ item.sticker.code }}</div>
+              <div class="text-[10px] text-gray-400 truncate">{{ item.sticker.name }}</div>
+              <div class="text-[10px] text-gray-500">x{{ item.quantity }}</div>
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="divider my-6 border-t border-gray-700"></div>
+
+  <!-- Seção: PROCURANDO -->
+  <div class="section mb-8">
+    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+      <mat-icon class="text-cyan">search</mat-icon>
+      Figurinhas que voce procura
+      <span class="text-sm font-normal text-gray-400">({{ wantedCodes().length }} adicionada(s))</span>
+    </h2>
+
+    <div class="add-wanted flex gap-2 mb-4">
+      <input
+        type="text"
+        placeholder="Ex: 2022-BRA-10"
+        class="flex-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white font-mono uppercase"
+        [value]="wantedCodeInput()"
+        (input)="wantedCodeInput.set($any($event.target).value)"
+        (keyup.enter)="addWanted()"
+        maxlength="20" />
+      <button class="btn-primary px-6" (click)="addWanted()">
+        <mat-icon>add</mat-icon> Adicionar
+      </button>
+    </div>
+
+    @if (wantedCodes().length > 0) {
+      <div class="wanted-list flex flex-wrap gap-2">
+        @for (code of wantedCodes(); track code) {
+          <div class="wanted-item flex items-center gap-2 px-3 py-2 rounded-lg bg-cyan/10 border border-cyan/30 text-sm font-mono">
+            <mat-icon class="text-cyan text-base">favorite</mat-icon>
+            <span class="text-cyan font-bold">{{ code }}</span>
+            <button class="text-gray-400 hover:text-red-400" (click)="removeWanted(code)">
+              <mat-icon class="text-base">close</mat-icon>
+            </button>
+          </div>
+        }
+      </div>
+    } @else {
+      <p class="text-muted text-sm">Adicione os codigos das figurinhas que voce quer em troca.</p>
+    }
+  </div>
+
+  <!-- Erro -->
+  @if (submitError()) {
+    <div class="error-banner bg-red-900/30 border border-red-500/30 rounded-xl p-4 mb-4">
+      <p class="text-red-400 text-sm">{{ submitError() }}</p>
+    </div>
+  }
+
+  <!-- Submit -->
+  <div class="submit-section">
+    <button
+      class="w-full btn-primary py-4 text-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+      [disabled]="!canSubmit() || isSubmitting()"
+      (click)="submitOffer()">
+      @if (isSubmitting()) {
+        <span class="flex items-center justify-center gap-2">
+          <span class="animate-spin"><mat-icon>sync</mat-icon></span> Criando oferta...
+        </span>
+      } @else {
+        <mat-icon class="mr-2">send</mat-icon>
+        Publicar Oferta de Troca
+      }
+    </button>
+    <p class="text-center text-xs text-gray-500 mt-2">Máx. 10 ofertas ativas. Trocas só entre figurinhas do mesmo tipo.</p>
+  </div>
+  }
 </div>

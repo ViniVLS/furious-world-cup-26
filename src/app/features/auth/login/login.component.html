@@ -21,13 +21,18 @@
 
       <div class="form-group">
         <label for="password" class="form-label text-fury">SENHA DE ACESSO AO VESTIÁRIO</label>
-        <input 
-          type="password" 
-          id="password" 
-          formControlName="password" 
-          class="form-input" 
-          placeholder="••••••••"
-        >
+        <div class="password-wrapper">
+          <input
+            [type]="showPassword() ? 'text' : 'password'"
+            id="password"
+            formControlName="password"
+            class="form-input"
+            placeholder="••••••••"
+          >
+          <button type="button" class="password-toggle" (click)="togglePassword()">
+            <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </div>
       </div>
 
       <button type="submit" class="btn-submit" [disabled]="loginForm.invalid">

@@ -5,7 +5,7 @@
     @for (tab of tabs; track tab.id) {
       <button 
         class="tab-btn" 
-        [class.active]="activeTab === tab.id"
+        [class.active]="activeTab() === tab.id"
         (click)="setTab(tab.id)">
         <mat-icon class="mr-2">{{ tab.icon }}</mat-icon>
         {{ tab.name }}
@@ -13,8 +13,13 @@
     }
   </div>
 
+  @if (isLoading()) {
+    <div class="text-center py-12">
+      <span class="animate-spin"><mat-icon class="text-4xl text-gray-500">sync</mat-icon></span>
+    </div>
+  } @else {
   <div class="ranking-list">
-    @for (user of topUsers; track user.rank) {
+    @for (user of topUsers(); track user.userId) {
       <div class="ranking-item">
         <div class="rank-number" [ngClass]="'rank-' + user.rank">{{ user.rank }}</div>
         <div class="user-info">
@@ -27,4 +32,5 @@
       </div>
     }
   </div>
+  }
 </div>

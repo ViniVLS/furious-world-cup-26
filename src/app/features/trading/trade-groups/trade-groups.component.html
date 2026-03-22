@@ -7,7 +7,7 @@
   <p class="text-muted mb-8">Junte-se a grupos para facilitar suas trocas. Máximo de 20 membros por grupo.</p>
 
   <div class="grid gap-4">
-    @for (group of groups; track group.id) {
+    @for (group of groups(); track group.id) {
     <div
       class="bg-gray-800 p-6 rounded-xl border border-gray-700 hover:border-fury transition-colors flex justify-between items-center">
       <div class="flex items-center gap-4">
@@ -42,7 +42,8 @@
           <mat-icon class="text-xs align-middle">person</mat-icon> {{ group.memberCount }}/{{ group.maxMembers }}
         </div>
         <button class="px-6 py-2 bg-fury text-white font-bold rounded hover:bg-red-600 transition-colors"
-          [disabled]="group.memberCount >= group.maxMembers">
+          [disabled]="group.memberCount >= group.maxMembers"
+          (click)="joinGroup(group)">
           {{ group.memberCount >= group.maxMembers ? 'LOTADO' : 'PARTICIPAR' }}
         </button>
       </div>

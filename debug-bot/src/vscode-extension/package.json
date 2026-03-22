@@ -1,0 +1,66 @@
+{
+  "name": "furious-debug-bot-vscode",
+  "displayName": "Furious Debug Bot",
+  "description": "Real-time error detection and auto-fix suggestions for Furious World Cup 26",
+  "version": "1.0.0",
+  "publisher": "furious-wc26",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Debuggers", "Linters", "Other"],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "debugBot.connect",
+        "title": "Debug Bot: Conectar"
+      },
+      {
+        "command": "debugBot.disconnect",
+        "title": "Debug Bot: Desconectar"
+      },
+      {
+        "command": "debugBot.showPanel",
+        "title": "Debug Bot: Mostrar Painel"
+      },
+      {
+        "command": "debugBot.applyFix",
+        "title": "Debug Bot: Aplicar Correção"
+      },
+      {
+        "command": "debugBot.ignoreFix",
+        "title": "Debug Bot: Ignorar"
+      },
+      {
+        "command": "debugBot.scan",
+        "title": "Debug Bot: Escanear Projeto"
+      }
+    ],
+    "configuration": {
+      "title": "Furious Debug Bot",
+      "properties": {
+        "debugBot.wsPort": {
+          "type": "number",
+          "default": 9876,
+          "description": "Porta do WebSocket server do Debug Bot"
+        },
+        "debugBot.autoConnect": {
+          "type": "boolean",
+          "default": true,
+          "description": "Conectar automaticamente ao iniciar"
+        },
+        "debugBot.showInlineHints": {
+          "type": "boolean",
+          "default": true,
+          "description": "Mostrar sugestões inline no editor"
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

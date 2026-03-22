@@ -1,0 +1,63 @@
+{"timestamp":"2026-03-22T05:34:11.694Z","type":"info","message":"Projeto: C:\\Users\\ViniciusL\\Documents\\Antigravity\\furious-world-cup-26"}
+{"timestamp":"2026-03-22T05:34:11.697Z","type":"info","message":"Regras de análise: 7"}
+{"timestamp":"2026-03-22T05:34:11.712Z","type":"success","message":"WebSocket server ativo na porta 9876"}
+{"timestamp":"2026-03-22T05:34:11.727Z","type":"success","message":"Monitorando: src"}
+{"timestamp":"2026-03-22T05:34:11.732Z","type":"success","message":"Log file: debug-bot\\logs\\app-output.log"}
+{"timestamp":"2026-03-22T05:34:11.739Z","type":"success","message":"Debug Bot iniciado! Monitorando mudanças..."}
+{"timestamp":"2026-03-22T05:34:11.744Z","type":"info","message":"Digite 'help' para ver comandos disponíveis."}
+{"timestamp":"2026-03-22T05:34:38.033Z","type":"info","message":"Escaneando src..."}
+{"timestamp":"2026-03-22T05:34:41.431Z","type":"warn","message":"Scan completo: 33 issue(s) encontrada(s)"}
+{"timestamp":"2026-03-22T05:34:41.550Z","type":"warn","message":"33 issue(s) detectada(s)! Analisando..."}
+{"timestamp":"2026-03-22T05:34:51.819Z","type":"info","message":"Encerrando Debug Bot..."}
+{"timestamp":"2026-03-22T05:34:51.835Z","type":"success","message":"Debug Bot encerrado. Até mais! 👋"}
+{"timestamp":"2026-03-22T05:40:56.282Z","type":"info","message":"Projeto: C:\\Users\\ViniciusL\\Documents\\Antigravity\\furious-world-cup-26"}
+{"timestamp":"2026-03-22T05:40:56.287Z","type":"info","message":"Regras de análise: 7"}
+{"timestamp":"2026-03-22T05:40:56.300Z","type":"success","message":"WebSocket server ativo na porta 9876"}
+{"timestamp":"2026-03-22T05:40:56.314Z","type":"success","message":"Monitorando: src"}
+{"timestamp":"2026-03-22T05:40:56.315Z","type":"success","message":"Log file: debug-bot\\logs\\app-output.log"}
+{"timestamp":"2026-03-22T05:40:56.325Z","type":"success","message":"Debug Bot iniciado! Monitorando mudanças..."}
+{"timestamp":"2026-03-22T05:40:56.327Z","type":"info","message":"Digite 'help' para ver comandos disponíveis."}
+{"timestamp":"2026-03-22T05:46:05.062Z","type":"debug","message":"Arquivo alterado: src\\app\\features\\admin\\debug-bot-overlay\\debug-bot-overlay.component.ts"}
+{"timestamp":"2026-03-22T05:46:06.916Z","type":"debug","message":"Arquivo alterado: src\\app\\features\\admin\\debug-bot-overlay\\debug-bot-overlay.component.html"}
+{"timestamp":"2026-03-22T05:50:55.189Z","type":"debug","message":"Arquivo alterado: src\\app\\features\\admin\\debug-bot-overlay\\debug-bot-overlay.component.ts"}
+{"timestamp":"2026-03-22T05:51:12.744Z","type":"debug","message":"Arquivo alterado: src\\app\\features\\admin\\debug-bot-overlay\\debug-bot-overlay.component.ts"}
+{"timestamp":"2026-03-22T05:52:32.770Z","type":"debug","message":"Arquivo alterado: src\\debug\\debug.service.ts"}
+{"timestamp":"2026-03-22T05:52:34.060Z","type":"warn","message":"5 problema(s) encontrado(s) em src\\debug\\debug.service.ts"}
+{"timestamp":"2026-03-22T05:52:34.278Z","type":"warn","message":"5 issue(s) detectada(s)! Analisando..."}
+{"timestamp":"2026-03-22T05:52:50.209Z","type":"debug","message":"Arquivo alterado: src\\debug\\debug.service.ts"}
+{"timestamp":"2026-03-22T05:52:51.112Z","type":"warn","message":"5 problema(s) encontrado(s) em src\\debug\\debug.service.ts"}
+{"timestamp":"2026-03-22T05:55:42.225Z","type":"debug","message":"Arquivo alterado: src\\app\\shared\\components\\bottom-nav\\bottom-nav.component.ts"}
+{"timestamp":"2026-03-22T05:58:13.897Z","type":"debug","message":"Arquivo alterado: src\\app\\app.ts"}
+{"timestamp":"2026-03-22T05:58:13.970Z","type":"warn","message":"1 problema(s) encontrado(s) em src\\app\\app.ts"}
+{"timestamp":"2026-03-22T06:24:47.398Z","type":"warn","message":"Opção inválida. Ignorando."}
+{"timestamp":"2026-03-22T06:25:16.365Z","type":"info","message":"Aplicando correção..."}
+{"timestamp":"2026-03-22T06:25:16.445Z","type":"error","message":"Falha ao aplicar correção: Não foi possível localizar o trecho de código a ser corrigido."}
+{"timestamp":"2026-03-22T06:25:32.333Z","type":"warn","message":"Ignorando sugestão."}
+{"timestamp":"2026-03-22T06:25:38.782Z","type":"warn","message":"Ignorando sugestão."}
+{"timestamp":"2026-03-22T06:25:43.677Z","type":"warn","message":"Ignorando sugestão."}
+{"timestamp":"2026-03-22T06:25:43.679Z","type":"info","message":"Aguardando novas mudanças..."}
+{"timestamp":"2026-03-22T06:29:14.004Z","type":"debug","message":"Arquivo alterado: src\\app\\core\\guards\\admin.guard.ts"}
+{"timestamp":"2026-03-22T06:32:08.431Z","type":"info","message":"Cliente conectado (1 total)"}
+{"timestamp":"2026-03-22T06:34:30.580Z","type":"debug","message":"Arquivo alterado: src\\app\\app.html"}
+{"timestamp":"2026-03-22T06:34:41.745Z","type":"debug","message":"Cliente desconectado (0 total)"}
+{"timestamp":"2026-03-22T06:37:08.842Z","type":"debug","message":"Arquivo alterado: src\\app\\core\\models\\user.model.ts"}
+{"timestamp":"2026-03-22T06:37:34.718Z","type":"debug","message":"Arquivo alterado: src\\app\\core\\services\\admin-state.service.ts"}
+{"timestamp":"2026-03-22T06:37:35.494Z","type":"warn","message":"3 problema(s) encontrado(s) em src\\app\\core\\services\\admin-state.service.ts"}
+{"timestamp":"2026-03-22T06:37:35.756Z","type":"warn","message":"9 issue(s) detectada(s)! Analisando..."}
+{"timestamp":"2026-03-22T06:37:49.984Z","type":"debug","message":"Arquivo alterado: src\\app\\features\\admin\\admin-home\\admin-home.component.html"}
+{"timestamp":"2026-03-22T06:39:36.538Z","type":"warn","message":"Opção inválida. Ignorando."}
+{"timestamp":"2026-03-22T06:39:54.304Z","type":"info","message":"Cliente conectado (1 total)"}
+{"timestamp":"2026-03-22T06:43:31.115Z","type":"debug","message":"Arquivo alterado: src\\app\\features\\auth\\login\\login.component.ts"}
+{"timestamp":"2026-03-22T06:43:38.264Z","type":"debug","message":"Cliente desconectado (0 total)"}
+{"timestamp":"2026-03-22T06:44:52.849Z","type":"debug","message":"Arquivo alterado: src\\app\\core\\services\\admin-state.service.ts"}
+{"timestamp":"2026-03-22T06:44:53.198Z","type":"warn","message":"3 problema(s) encontrado(s) em src\\app\\core\\services\\admin-state.service.ts"}
+{"timestamp":"2026-03-22T06:55:12.480Z","type":"debug","message":"Arquivo alterado: src\\app\\core\\services\\audio-assets.service.ts"}
+{"timestamp":"2026-03-22T06:55:13.014Z","type":"warn","message":"6 problema(s) encontrado(s) em src\\app\\core\\services\\audio-assets.service.ts"}
+{"timestamp":"2026-03-22T06:56:28.496Z","type":"debug","message":"Arquivo alterado: src\\app\\features\\admin\\admin-home\\admin-home.component.ts"}
+{"timestamp":"2026-03-22T06:56:42.134Z","type":"debug","message":"Arquivo alterado: src\\app\\features\\admin\\admin-home\\admin-home.component.html"}
+{"timestamp":"2026-03-22T06:58:23.427Z","type":"debug","message":"Arquivo alterado: src\\app\\core\\services\\audio-assets.service.ts"}
+{"timestamp":"2026-03-22T06:58:23.980Z","type":"warn","message":"6 problema(s) encontrado(s) em src\\app\\core\\services\\audio-assets.service.ts"}
+{"timestamp":"2026-03-22T07:00:32.844Z","type":"info","message":"Cliente conectado (1 total)"}
+{"timestamp":"2026-03-22T07:05:59.589Z","type":"debug","message":"Cliente desconectado (0 total)"}
+{"timestamp":"2026-03-22T07:07:25.077Z","type":"debug","message":"Arquivo alterado: src\\environments\\version.ts"}
+{"timestamp":"2026-03-22T07:08:00.944Z","type":"debug","message":"Arquivo alterado: src\\app\\shared\\components\\bottom-nav\\bottom-nav.component.ts"}

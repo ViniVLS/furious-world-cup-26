@@ -1,18 +1,26 @@
 <div class="marketplace-page p-6">
   <div class="flex justify-between items-center mb-8">
-    <h1 class="text-4xl font-bold">Praça de Trocas</h1>
+    <h1 class="text-4xl font-bold">Praca de Trocas</h1>
     <div class="flex gap-4">
       <button class="btn-secondary" routerLink="/trading/groups">Grupos</button>
       <button class="btn-primary" routerLink="/trading/offer">Criar Oferta</button>
     </div>
   </div>
 
+  @if (offers().length === 0) {
+    <div class="empty-state text-center py-12">
+      <mat-icon class="text-6xl text-gray-600 mb-4">swap_horiz</mat-icon>
+      <p class="text-muted text-xl">Nenhuma oferta encontrada.</p>
+      <p class="text-muted text-sm mt-2">Seja o primeiro a criar uma oferta!</p>
+    </div>
+  }
+
   <div class="offers-list">
-    @for (offer of offers; track offer.id) {
+    @for (offer of offers(); track offer.id) {
       <div class="offer-card" [class.match]="isMatch(offer)">
         <div class="offer-header flex justify-between items-center mb-4">
           <div class="flex items-center gap-2">
-            <span class="font-bold text-lg">{{ offer.offererProfile?.username }}</span>
+            <span class="font-bold text-lg">{{ offer.offererProfile?.username || 'Colecionador' }}</span>
             <span class="text-sm text-gray-400 flex items-center"><mat-icon class="text-xs mr-1 text-gold">star</mat-icon> {{ offer.offererProfile?.reputation | number:'1.1-1' }}</span>
             <span class="text-xs px-2 py-1 bg-gray-800 rounded">{{ offer.offererProfile?.country }}</span>
           </div>
@@ -47,7 +55,10 @@
         
         <div class="flex justify-between items-center mt-4">
           <span class="text-xs text-gray-500">Expira em: {{ offer.expiresAt | date:'short' }}</span>
-          <button class="btn-action bg-fury text-white px-6 py-2 rounded font-bold hover:bg-red-600 transition-colors">Propor Troca</button>
+          <button class="btn-action bg-fury text-white px-6 py-2 rounded font-bold hover:bg-red-600 transition-colors"
+            (click)="acceptOffer(offer.id)">
+            Propor Troca
+          </button>
         </div>
       </div>
     }
